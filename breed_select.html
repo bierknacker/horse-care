@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Horse Care – Rasse wählen</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  width:100vw; height:100vh; overflow:hidden;
+  font-family:'Crimson Pro', serif;
+  background:#0a0a12;
+}
+
+.screen {
+  position:relative; width:100%; height:100%;
+  max-width:430px; margin:0 auto;
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+
+/* ── HINTERGRUND-FARBVERLAUF pro Rasse ── */
+.race-bg {
+  position:absolute; inset:0;
+  transition:background 0.6s ease, opacity 0.6s ease;
+  z-index:0;
+}
+
+/* Aquarell-Wolken oben (wie Titelscreen) */
+.cloud { position:absolute; border-radius:50%; filter:blur(18px); z-index:1; pointer-events:none; }
+.c1 { width:160px; height:65px; top:3%; right:-10px; background:rgba(255,255,255,0.18); }
+.c2 { width:120px; height:50px; top:9%;  right:35px;  background:rgba(255,255,255,0.12); filter:blur(12px); }
+.c3 { width:110px; height:45px; top:5%;  left:-5px;   background:rgba(255,255,255,0.15); }
+.c4 { width:170px; height:55px; top:1%;  left:25px;   background:rgba(255,255,255,0.10); filter:blur(22px); }
+
+/* ── HEADER ── */
+.header {
+  position:relative; z-index:10;
+  padding:18px 16px 0;
+  text-align:center;
+}
+.header-sub {
+  font-size:12px; letter-spacing:2.5px; text-transform:uppercase;
+  color:rgba(255,255,255,0.5); margin-bottom:4px;
+}
+.header-title {
+  font-family:'Great Vibes'; font-size:clamp(36px,10vw,48px);
+  color:#fff; text-shadow:0 2px 12px rgba(0,0,0,0.4);
+}
+
+/* ── CAROUSEL ── */
+.carousel-wrap {
+  position:relative; z-index:10;
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:0 0 8px;
+  overflow:hidden;
+}
+
+/* Pfeil-Buttons */
+.arrow {
+  position:absolute; top:50%; transform:translateY(-50%);
+  z-index:20; width:44px; height:44px; border-radius:50%;
+  background:rgba(255,255,255,0.15);
+  border:1.5px solid rgba(255,255,255,0.25);
+  color:#fff; font-size:20px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  backdrop-filter:blur(6px);
+  transition:background .15s, transform .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.arrow:active { background:rgba(255,255,255,0.3); transform:translateY(-50%) scale(.93); }
+.arrow.left  { left:10px; }
+.arrow.right { right:10px; }
+
+/* Pferd-Bild */
+.horse-stage {
+  width:68%; max-width:240px;
+  position:relative;
+  animation:floatIn .4s ease both;
+}
+.horse-stage img {
+  width:100%; display:block;
+  filter:drop-shadow(0 10px 28px rgba(0,0,0,0.45));
+  transition:opacity .25s;
+}
+
+/* Punkte-Navigation */
+.dots {
+  display:flex; gap:7px; margin-top:10px;
+}
+.dot {
+  width:7px; height:7px; border-radius:50%;
+  background:rgba(255,255,255,0.3);
+  transition:background .3s, transform .3s;
+}
+.dot.active {
+  background:#fff; transform:scale(1.3);
+}
+
+/* ── INFO-PANEL ── */
+.info-panel {
+  position:relative; z-index:10;
+  background:rgba(0,0,0,0.45);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,0.1);
+  border-radius:24px 24px 0 0;
+  padding:16px 20px 20px;
+  flex-shrink:0;
+}
+
+.race-header {
+  display:flex; align-items:baseline; justify-content:space-between;
+  margin-bottom:4px;
+}
+.race-name {
+  font-family:'Great Vibes'; font-size:clamp(30px,8vw,38px);
+  color:#fff; line-height:1;
+  transition:color .4s;
+}
+.race-origin {
+  font-size:12px; color:rgba(255,255,255,0.45); font-style:italic;
+}
+
+.race-desc {
+  font-size:13px; color:rgba(255,255,255,0.7); line-height:1.5;
+  margin-bottom:10px; font-style:italic;
+}
+
+/* Eigenschaften-Tags */
+.traits {
+  display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;
+}
+.trait {
+  font-size:11px; font-weight:600; letter-spacing:.5px;
+  padding:3px 10px; border-radius:50px;
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.2);
+  color:rgba(255,255,255,0.85);
+  transition:background .4s, border-color .4s;
+}
+
+/* Stats */
+.stats {
+  display:grid; grid-template-columns:1fr 1fr; gap:6px 14px;
+  margin-bottom:14px;
+}
+.stat-row {
+  display:flex; flex-direction:column; gap:2px;
+}
+.stat-label {
+  font-size:10px; font-weight:600; letter-spacing:1px;
+  text-transform:uppercase; color:rgba(255,255,255,0.45);
+}
+.stat-bar-bg {
+  height:5px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden;
+}
+.stat-bar-fill {
+  height:100%; border-radius:10px;
+  transition:width .5s ease, background-color .4s;
+}
+
+/* Auswahl-Button */
+.btn-select {
+  width:100%; padding:13px;
+  border-radius:50px;
+  border:none;
+  font-family:'Great Vibes'; font-size:28px;
+  color:#fff; cursor:pointer;
+  letter-spacing:1px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  transition:transform .15s, box-shadow .15s, background .4s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-select:active { transform:scale(.97); box-shadow:0 2px 10px rgba(0,0,0,0.2); }
+
+@keyframes floatIn {
+  from { opacity:0; transform:translateY(12px) scale(.96); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* ── NAME-EINGABE (erscheint nach Rassen-Auswahl) ── */
+.name-overlay {
+  position:fixed; inset:0; z-index:100;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(8px);
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+  opacity:0; pointer-events:none;
+  transition:opacity .3s ease;
+}
+.name-overlay.visible {
+  opacity:1; pointer-events:all;
+}
+.name-card {
+  width:100%; max-width:360px;
+  background:rgba(20,20,30,0.95);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:24px;
+  padding:28px 24px 24px;
+  display:flex; flex-direction:column; align-items:center; gap:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  transform:translateY(20px);
+  transition:transform .35s ease;
+}
+.name-overlay.visible .name-card {
+  transform:translateY(0);
+}
+.name-horse-img {
+  width:100px; height:100px; object-fit:contain;
+  filter:drop-shadow(0 6px 16px rgba(0,0,0,0.4));
+}
+.name-title {
+  font-family:'Great Vibes'; font-size:30px; color:#fff;
+  text-align:center; line-height:1.1;
+}
+.name-subtitle {
+  font-size:13px; color:rgba(255,255,255,0.45);
+  text-align:center; font-style:italic; margin-top:-8px;
+}
+.name-input-wrap {
+  width:100%; position:relative;
+}
+.name-input {
+  width:100%; padding:12px 16px;
+  background:rgba(255,255,255,0.07);
+  border:1.5px solid rgba(255,255,255,0.15);
+  border-radius:14px;
+  font-family:'Great Vibes'; font-size:26px;
+  color:#fff; text-align:center;
+  outline:none;
+  transition:border-color .2s;
+}
+.name-input::placeholder {
+  color:rgba(255,255,255,0.2);
+  font-size:20px;
+}
+.name-input:focus {
+  border-color:rgba(255,255,255,0.4);
+}
+.name-counter {
+  position:absolute; bottom:-18px; right:4px;
+  font-size:10px; color:rgba(255,255,255,0.25);
+}
+.btn-confirm {
+  width:100%; padding:13px;
+  border-radius:50px; border:none;
+  font-family:'Great Vibes'; font-size:28px;
+  color:#fff; cursor:pointer;
+  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  transition:transform .15s, background .4s;
+  -webkit-tap-highlight-color:transparent;
+  margin-top:8px;
+}
+.btn-confirm:active { transform:scale(.97); }
+.btn-confirm:disabled {
+  opacity:0.35; pointer-events:none;
+}
+.btn-back-race {
+  font-size:13px; color:rgba(255,255,255,0.35);
+  background:none; border:none; cursor:pointer;
+  font-family:'Crimson Pro'; text-decoration:underline;
+  -webkit-tap-highlight-color:transparent;
+}
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <div class="race-bg" id="raceBg"></div>
+
+  <div class="cloud c4"></div>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-sub">Wähle deine Rasse</div>
+    <div class="header-title">Horse Care</div>
+  </div>
+
+  <!-- Carousel -->
+  <div class="carousel-wrap">
+    <button class="arrow left" onclick="navigate(-1)">&#8249;</button>
+
+    <div class="horse-stage" id="horseStage">
+      <img id="horseImg" src="fohlen.png" alt="Pferd">
+    </div>
+
+    <div class="dots" id="dots"></div>
+
+    <button class="arrow right" onclick="navigate(1)">&#8250;</button>
+  </div>
+
+  <!-- Info Panel -->
+  <div class="info-panel">
+    <div class="race-header">
+      <span class="race-name" id="raceName">–</span>
+      <span class="race-origin" id="raceOrigin">–</span>
+    </div>
+    <p class="race-desc" id="raceDesc">–</p>
+    <div class="traits" id="raceTraits"></div>
+    <div class="stats" id="raceStats"></div>
+    <button class="btn-select" id="btnSelect" onclick="selectRace()">
+      Diese Rasse wählen
+    </button>
+  </div>
+
+</div>
+
+<!-- Name-Eingabe Overlay -->
+<div class="name-overlay" id="nameOverlay">
+  <div class="name-card">
+    <img class="name-horse-img" id="nameHorseImg" src="fohlen.png" alt="Pferd">
+    <div class="name-title" id="nameTitleRace">Dein Friese</div>
+    <div class="name-subtitle">Wie soll dein Fohlen heißen?</div>
+    <div class="name-input-wrap">
+      <input class="name-input" id="nameInput" type="text"
+             maxlength="18" placeholder="Name eingeben…"
+             oninput="onNameInput()" onkeydown="onNameKey(event)">
+      <span class="name-counter"><span id="nameCount">0</span>/18</span>
+    </div>
+    <button class="btn-confirm" id="btnConfirm" onclick="confirmName()" disabled>
+      Los geht's! 🐴
+    </button>
+    <button class="btn-back-race" onclick="closeNameOverlay()">← Andere Rasse wählen</button>
+  </div>
+</div>
+
+<script src="gamedata.js"></script>
+<script>
+const RACES = [{"id": "friese", "name": "Friese", "origin": "Niederlande", "desc": "Majestätisch und kraftvoll – der Friese beeindruckt mit seinem pechschwarzen Fell und wallender Mähne.", "traits": ["Sanftmütig", "Ausdauernd", "Elegant"], "stats": {"Kraft": 80, "Ausdauer": 75, "Geschwindigkeit": 65, "Wendigkeit": 60}, "color": "#1a1a2e", "accent": "#7c6fe0", "img": "friese.png"}, {"id": "andalusier", "name": "Andalusier", "origin": "Spanien", "desc": "Stolz und feurig – der Andalusier ist eine der ältesten und schönsten Pferderassen der Welt.", "traits": ["Temperamentvoll", "Intelligent", "Anmutig"], "stats": {"Kraft": 72, "Ausdauer": 70, "Geschwindigkeit": 78, "Wendigkeit": 82}, "color": "#2d1b00", "accent": "#e09b30", "img": "andalusier.png"}, {"id": "quarter", "name": "Quarter Horse", "origin": "USA", "desc": "Schnell wie der Blitz auf kurzen Distanzen – das Quarter Horse ist das beliebteste Pferd Amerikas.", "traits": ["Schnell", "Zuverlässig", "Vielseitig"], "stats": {"Kraft": 78, "Ausdauer": 68, "Geschwindigkeit": 95, "Wendigkeit": 75}, "color": "#1a0a00", "accent": "#c0632a", "img": "quarter_horse.png"}, {"id": "haflinger", "name": "Haflinger", "origin": "Österreich / Tirol", "desc": "Robust und herzlich – der Haflinger mit seinem goldenen Fell ist ein treuer Begleiter für jedes Alter.", "traits": ["Gutmütig", "Robust", "Ausdauernd"], "stats": {"Kraft": 70, "Ausdauer": 85, "Geschwindigkeit": 60, "Wendigkeit": 65}, "color": "#1a0e00", "accent": "#d4a017", "img": "haflinger.png"}, {"id": "shetland", "name": "Shetland Pony", "origin": "Schottland", "desc": "Klein aber oho – das Shetland Pony ist unglaublich stark für seine Größe und voller Charakter.", "traits": ["Eigensinnig", "Stark", "Charmant"], "stats": {"Kraft": 65, "Ausdauer": 90, "Geschwindigkeit": 55, "Wendigkeit": 88}, "color": "#0a1a0a", "accent": "#5aab6d", "img": "shetland.png"}];
+
+let current = 0;
+let isAnimating = false;
+
+// Dots erstellen
+const dotsEl = document.getElementById('dots');
+RACES.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+});
+
+function navigate(dir) {
+  if (isAnimating) return;
+  goTo((current + dir + RACES.length) % RACES.length);
+}
+
+function goTo(idx) {
+  if (isAnimating || idx === current) return;
+  isAnimating = true;
+  current = idx;
+  updateUI();
+  setTimeout(() => { isAnimating = false; }, 450);
+}
+
+function updateUI() {
+  const r = RACES[current];
+
+  // Hintergrund
+  document.getElementById('raceBg').style.background =
+    `radial-gradient(ellipse 120% 80% at 50% 0%, ${r.color}cc 0%, #0a0a12 70%)`;
+
+  // Pferd-Bild animieren
+  const img = document.getElementById('horseImg');
+  const stage = document.getElementById('horseStage');
+  img.style.opacity = '0';
+  stage.style.animation = 'none';
+  void stage.offsetWidth;
+  stage.style.animation = 'floatIn .4s ease both';
+  setTimeout(() => {
+    img.src = r.img;
+    img.onerror = () => { img.src = 'fohlen.png'; };
+    img.style.opacity = '1';
+  }, 120);
+
+  // Dots
+  document.querySelectorAll('.dot').forEach((d, i) =>
+    d.classList.toggle('active', i === current));
+
+  // Name & Herkunft
+  document.getElementById('raceName').textContent = r.name;
+  document.getElementById('raceOrigin').textContent = r.origin;
+  document.getElementById('raceDesc').textContent = r.desc;
+
+  // Traits
+  const traitsEl = document.getElementById('raceTraits');
+  traitsEl.innerHTML = r.traits.map(t =>
+    `<span class="trait">${t}</span>`).join('');
+
+  // Stats
+  const statsEl = document.getElementById('raceStats');
+  statsEl.innerHTML = Object.entries(r.stats).map(([label, val]) => `
+    <div class="stat-row">
+      <span class="stat-label">${label}</span>
+      <div class="stat-bar-bg">
+        <div class="stat-bar-fill" style="width:${val}%; background:${r.accent}"></div>
+      </div>
+    </div>`).join('');
+
+  // Button-Farbe
+  document.getElementById('btnSelect').style.background =
+    `linear-gradient(135deg, ${r.accent}cc, ${r.accent})`;
+  document.getElementById('raceName').style.color = r.accent;
+}
+
+// Swipe-Gesten
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 40) navigate(dx < 0 ? 1 : -1);
+});
+
+function selectRace() {
+  const r = RACES[current];
+  // Overlay befüllen
+  const img = document.getElementById('nameHorseImg');
+  img.src = r.img;
+  img.onerror = () => { img.src = 'fohlen.png'; };
+  document.getElementById('nameTitleRace').textContent = 'Dein ' + r.name;
+  document.getElementById('nameTitleRace').style.color = r.accent;
+  document.getElementById('btnConfirm').style.background =
+    'linear-gradient(135deg,' + r.accent + 'bb,' + r.accent + ')';
+  document.getElementById('nameInput').value = '';
+  document.getElementById('nameCount').textContent = '0';
+  document.getElementById('btnConfirm').disabled = true;
+  document.getElementById('nameOverlay').classList.add('visible');
+  setTimeout(() => document.getElementById('nameInput').focus(), 350);
+}
+
+function onNameInput() {
+  const val = document.getElementById('nameInput').value.trim();
+  document.getElementById('nameCount').textContent = document.getElementById('nameInput').value.length;
+  document.getElementById('btnConfirm').disabled = val.length === 0;
+}
+
+function onNameKey(e) {
+  if (e.key === 'Enter') confirmName();
+}
+
+function closeNameOverlay() {
+  document.getElementById('nameOverlay').classList.remove('visible');
+}
+
+function confirmName() {
+  const r    = RACES[current];
+  const name = document.getElementById('nameInput').value.trim();
+  if (!name) return;
+
+  let data = GameData.load();
+  if (!data.race || data.race.id !== r.id) data = GameData.defaults();
+
+  data.race       = { id: r.id, name: r.name, img: r.img, accent: r.accent };
+  data.horseName  = name;
+
+  if (!data.startDate) {
+    data.startDate     = new Date().toISOString();
+    data.lastGameDay   = new Date().toISOString().slice(0, 10);
+    data.lastTaskReset = new Date().toISOString().slice(0, 10);
+  }
+
+  GameData.save(data);
+  window.location.href = 'hub.html';
+}
+
+// Init
+updateUI();
+</script>
+</body>
+</html>

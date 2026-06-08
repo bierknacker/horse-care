@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Horse Care – Stall</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  width:100vw; height:100vh; overflow:hidden;
+  background:#1a1008;
+  font-family:'Crimson Pro', serif;
+}
+
+.screen {
+  position:relative; width:100%; height:100%;
+  max-width:430px; margin:0 auto;
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+
+/* ── HINTERGRUND ── */
+.bg-layer {
+  position:absolute; inset:0;
+  background-size:cover;
+  background-position:center center;
+  transition:opacity 1.2s ease;
+  opacity:0;
+}
+.bg-layer.active { opacity:1; }
+
+#bg-morgens { background-image:url("box_morgens.png"); }
+#bg-mittags { background-image:url("box_mittags.png"); }
+#bg-abends  { background-image:url("box_abends.png"); }
+#bg-nachts  { background-image:url("box_nachts.png"); }
+
+/* ── HEADER ── */
+.header {
+  position:relative; z-index:20;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px 10px;
+  background:linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, transparent 100%);
+}
+
+.btn-back {
+  background:rgba(0,0,0,0.3);
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:50px; padding:6px 16px;
+  color:#fff; font-family:'Crimson Pro'; font-size:14px; font-weight:600;
+  cursor:pointer; backdrop-filter:blur(6px);
+  -webkit-tap-highlight-color:transparent;
+  transition:background .15s;
+}
+.btn-back:active { background:rgba(0,0,0,0.5); }
+
+.header-title {
+  font-family:'Great Vibes'; font-size:32px; color:#fff;
+  text-shadow:0 2px 8px rgba(0,0,0,0.5);
+}
+
+.daytime-badge {
+  background:rgba(0,0,0,0.3);
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:50px; padding:6px 12px;
+  color:#fff; font-size:12px; font-weight:600;
+  display:flex; align-items:center; gap:5px;
+  backdrop-filter:blur(6px);
+}
+
+/* ── SPACER (Stallbild dominiert) ── */
+.spacer { flex:1; }
+
+/* ── AKTIONS-PANEL unten ── */
+.action-panel {
+  position:relative; z-index:20;
+  background:rgba(15,10,5,0.78);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,0.12);
+  padding:12px 14px 20px;
+}
+
+.panel-title {
+  font-family:'Crimson Pro'; font-size:13px; font-weight:600;
+  color:rgba(255,255,255,0.5); letter-spacing:1.5px; text-transform:uppercase;
+  margin-bottom:10px;
+}
+
+/* Aufgaben-Liste */
+.tasks {
+  display:flex; flex-direction:column; gap:8px;
+  margin-bottom:14px;
+}
+
+.task-row {
+  display:flex; align-items:center; gap:10px;
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:14px; padding:9px 12px;
+  cursor:pointer;
+  transition:background .15s, transform .1s;
+  -webkit-tap-highlight-color:transparent;
+}
+.task-row:active { background:rgba(255,255,255,0.15); transform:scale(.98); }
+.task-row.done {
+  opacity:0.45;
+  pointer-events:none;
+}
+.task-row.done .task-name { text-decoration:line-through; }
+
+.task-icon {
+  width:38px; height:38px; object-fit:contain; flex-shrink:0;
+}
+
+.task-info { flex:1; }
+.task-name {
+  font-size:14px; font-weight:600; color:#fff; display:block; margin-bottom:2px;
+}
+.task-desc {
+  font-size:11px; color:rgba(255,255,255,0.5);
+}
+
+.task-reward {
+  font-size:12px; font-weight:600;
+  color:#a29bfe; white-space:nowrap;
+}
+
+.task-check {
+  width:22px; height:22px; border-radius:50%;
+  border:2px solid rgba(255,255,255,0.3);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; color:transparent;
+  transition:all .2s;
+}
+.task-row.done .task-check {
+  background:#6c5ce7; border-color:#6c5ce7; color:#fff;
+}
+
+/* Info-Zeile */
+.info-row {
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  font-size:12px; color:rgba(255,255,255,0.4);
+  text-align:center;
+}
+
+.menu-btn-feed {
+  flex:1; background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:14px; padding:8px 4px 6px;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  cursor:pointer; transition:background .15s, transform .1s;
+  -webkit-tap-highlight-color:transparent;
+}
+.menu-btn-feed:active { background:rgba(255,255,255,0.18); transform:scale(.96); }
+.menu-btn-feed img { width:38px; height:38px; object-fit:contain; }
+.menu-btn-feed span { font-size:10px; font-weight:600; color:rgba(255,255,255,0.85); }
+.menu-btn-feed .inv-count { font-size:9px; color:#f0c040; font-weight:700; margin-top:-2px; }
+.menu-btn-feed:disabled { opacity:0.4; pointer-events:none; }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <!-- Hintergründe -->
+  <div class="bg-layer" id="bg-morgens"></div>
+  <div class="bg-layer" id="bg-mittags"></div>
+  <div class="bg-layer" id="bg-abends"></div>
+  <div class="bg-layer" id="bg-nachts"></div>
+
+  <!-- Header -->
+  <div class="header">
+    <button class="btn-back" onclick="window.location.href='hub.html'">← Hub</button>
+    <span class="header-title">Stall</span>
+    <div class="daytime-badge">
+      <span id="daytimeEmoji">🌅</span>
+      <span id="daytimeLabel">Morgen</span>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- Aktions-Panel -->
+  <div class="action-panel">
+    <div class="panel-title">Stallarbeiten</div>
+
+    <div class="tasks">
+
+      <!-- Füttern-Sektion -->
+      <div class="panel-title" style="margin-top:4px;">Füttern & Tränken</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button class="menu-btn-feed" id="btn-heu" onclick="useItem('heu')">
+          <img src="icon_heuballen.png" alt="Heu">
+          <span>Heu</span>
+          <span class="inv-count" id="inv-heu">0 Port.</span>
+        </button>
+        <button class="menu-btn-feed" onclick="feedHorse('thirst',25,'Wasser aufgefüllt 💧')">
+          <img src="icon_traenke.png" alt="Wasser">
+          <span>Wasser</span>
+          <span class="inv-count">gratis</span>
+        </button>
+        <button class="menu-btn-feed" id="btn-mash" onclick="useItem('mash')">
+          <img src="icon_mash.png" alt="Mash">
+          <span>Mash</span>
+          <span class="inv-count" id="inv-mash">0 St.</span>
+        </button>
+      </div>
+      <div class="panel-title">Stallarbeiten</div>
+
+      <div class="task-row" id="task-misten" onclick="completeTask('misten')">
+        <img class="task-icon" src="icon_eimer.png" alt="Misten">
+        <div class="task-info">
+          <span class="task-name">Ausmisten</span>
+          <span class="task-desc">Box von Mist befreien</span>
+        </div>
+        <span class="task-reward">+15 XP</span>
+        <div class="task-check">✓</div>
+      </div>
+
+      <div class="task-row" id="task-einstreuen" onclick="completeTask('einstreuen')">
+        <img class="task-icon" src="icon_heuballen.png" alt="Einstreuen">
+        <div class="task-info">
+          <span class="task-name">Einstreuen</span>
+          <span class="task-desc">Frisches Stroh verteilen</span>
+        </div>
+        <span class="task-reward">+10 XP</span>
+        <div class="task-check">✓</div>
+      </div>
+
+      <div class="task-row" id="task-putzen" onclick="completeTask('putzen')">
+        <img class="task-icon" src="icon_putzen.png" alt="Putzen">
+        <div class="task-info">
+          <span class="task-name">Box putzen</span>
+          <span class="task-desc">Wände und Boden reinigen</span>
+        </div>
+        <span class="task-reward">+10 XP</span>
+        <div class="task-check">✓</div>
+      </div>
+
+      <div class="task-row" id="task-wasser" onclick="completeTask('wasser')">
+        <img class="task-icon" src="icon_traenke.png" alt="Wasser">
+        <div class="task-info">
+          <span class="task-name">Wasser auffüllen</span>
+          <span class="task-desc">Tränke frisch befüllen</span>
+        </div>
+        <span class="task-reward">+5 XP</span>
+        <div class="task-check">✓</div>
+      </div>
+
+    </div>
+
+    <div class="info-row">
+      🌟 Erledigte Aufgaben geben am Tagesende Erfahrungspunkte
+    </div>
+
+    <!-- Pflege-Sektion -->
+    <div class="panel-title" style="margin-top:12px;">Pflege</div>
+    <div class="tasks" id="careTasks">
+
+      <div class="task-row" id="care-buerste" onclick="useCareTask('buerste')">
+        <img class="task-icon" src="icon_buerste.png" alt="Bürsten">
+        <div class="task-info">
+          <span class="task-name">Bürsten</span>
+          <span class="task-desc" id="desc-buerste">Keine Bürste im Inventar</span>
+        </div>
+        <span class="task-reward" id="xp-buerste">+12 XP</span>
+        <div class="task-check">✓</div>
+      </div>
+
+      <div class="task-row" id="care-huf" onclick="useCareTask('huf')">
+        <img class="task-icon" src="icon_hufkratzer.png" alt="Hufe">
+        <div class="task-info">
+          <span class="task-name">Hufe kratzen</span>
+          <span class="task-desc" id="desc-huf">Kein Hufkratzer im Inventar</span>
+        </div>
+        <span class="task-reward">+8 XP</span>
+        <div class="task-check">✓</div>
+      </div>
+
+      <div class="task-row" id="care-schwamm" onclick="useCareTask('schwamm')">
+        <img class="task-icon" src="icon_putzen.png" alt="Waschen">
+        <div class="task-info">
+          <span class="task-name">Abwaschen</span>
+          <span class="task-desc" id="desc-schwamm">Kein Schwamm im Inventar</span>
+        </div>
+        <span class="task-reward">+10 XP</span>
+        <div class="task-check">✓</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="gamedata.js"></script>
+<script>
+const PERIODS = [
+  { id:'morgens', label:'Morgen', emoji:'🌅', from:6,  to:11 },
+  { id:'mittags', label:'Mittag', emoji:'☀️', from:11, to:17 },
+  { id:'abends',  label:'Abend',  emoji:'🌇', from:17, to:21 },
+  { id:'nachts',  label:'Nacht',  emoji:'🌙', from:21, to:6  },
+];
+
+function getPeriod(h) {
+  for (const p of PERIODS) {
+    if (p.from < p.to) {
+      if (h >= p.from && h < p.to) return p;
+    } else {
+      if (h >= p.from || h < p.to) return p;
+    }
+  }
+  return PERIODS[0];
+}
+
+let currentPeriodId = null;
+
+function updateBg() {
+  const h = new Date().getHours();
+  const period = getPeriod(h);
+  if (period.id !== currentPeriodId) {
+    currentPeriodId = period.id;
+    document.querySelectorAll('.bg-layer').forEach(el => el.classList.remove('active'));
+    document.getElementById('bg-' + period.id).classList.add('active');
+    document.getElementById('daytimeEmoji').textContent = period.emoji;
+    document.getElementById('daytimeLabel').textContent = period.label;
+  }
+}
+
+updateBg();
+setInterval(updateBg, 15000);
+
+// ── Spielstand laden ──────────────────────────
+let gd = GameData.load();
+
+// Aufgaben-Status aus Spielstand wiederherstellen
+function restoreTasks() {
+  const tasks = gd.stallTasks || {};
+  // Standard-Stallaufgaben
+  ['misten','einstreuen','putzen','wasser'].forEach(id => {
+    if (tasks[id]) {
+      const row = document.getElementById('task-' + id);
+      if (row) row.classList.add('done');
+    }
+  });
+}
+restoreTasks();
+renderInventory();
+renderCareItems();
+
+// Aufgabe abhaken
+function completeTask(id) {
+  if (gd.stallTasks[id]) return;
+
+  // Im Spielstand speichern + XP / Stats anpassen
+  gd = GameData.completeStallTask(gd, id);
+
+  // UI abhaken
+  const row = document.getElementById('task-' + id);
+  if (row) {
+    row.classList.add('done');
+    row.style.transition = 'transform .15s';
+    row.style.transform = 'scale(1.02)';
+    setTimeout(() => { row.style.transform = ''; }, 150);
+  }
+
+  // Kurzes XP-Toast anzeigen
+  const rewards = { misten: 15, einstreuen: 10, putzen: 10, wasser: 5 };
+  showToast('+' + (rewards[id] || 0) + ' XP');
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = `
+    position:fixed; top:20%; left:50%; transform:translateX(-50%);
+    background:rgba(108,92,231,0.9); color:#fff;
+    font-family:'Crimson Pro',serif; font-size:18px; font-weight:600;
+    padding:8px 22px; border-radius:50px;
+    pointer-events:none; z-index:999;
+    animation: toastAnim .9s ease forwards;
+  `;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 900);
+}
+
+const style = document.createElement('style');
+style.textContent = '@keyframes toastAnim { 0%{opacity:0;transform:translateX(-50%) translateY(10px)} 20%{opacity:1;transform:translateX(-50%) translateY(0)} 80%{opacity:1} 100%{opacity:0;transform:translateX(-50%) translateY(-10px)} }';
+document.head.appendChild(style);
+
+// ── Inventar-Zähler rendern ──────────────────
+function renderInventory() {
+  const inv = gd.inventory || {};
+  const heuEl  = document.getElementById('inv-heu');
+  const mashEl = document.getElementById('inv-mash');
+  if (heuEl)  heuEl.textContent  = (inv.heu  || 0) + ' Port.';
+  if (mashEl) mashEl.textContent = (inv.mash || 0) + ' St.';
+  // Buttons deaktivieren wenn leer
+  const btnHeu  = document.getElementById('btn-heu');
+  const btnMash = document.getElementById('btn-mash');
+  if (btnHeu)  btnHeu.disabled  = !(inv.heu  > 0);
+  if (btnMash) btnMash.disabled = !(inv.mash > 0);
+}
+
+// ── Füttern aus Inventar ─────────────────────
+function useItem(itemId) {
+  if (!gd.inventory) gd.inventory = {};
+  if (itemId === 'heu') {
+    if (!(gd.inventory.heu > 0)) { showToast('Kein Heu mehr! Kaufe im Shop.', true); return; }
+    gd.inventory.heu -= 1;
+    gd = GameData.setStat(gd, 'hunger', gd.stats.hunger + 20);
+    showToast('Heu verfüttert 🌾');
+  } else if (itemId === 'mash') {
+    if (!(gd.inventory.mash > 0)) { showToast('Kein Mash mehr! Kaufe im Shop.', true); return; }
+    gd.inventory.mash -= 1;
+    gd = GameData.setStat(gd, 'hunger', gd.stats.hunger + 25);
+    gd = GameData.setStat(gd, 'energy', gd.stats.energy + 30);
+    showToast('Mash gefüttert ⚡');
+  }
+  renderInventory();
+}
+
+// ── Gratis-Wasser ─────────────────────────────
+function feedHorse(stat, amount, msg) {
+  gd = GameData.setStat(gd, stat, gd.stats[stat] + amount);
+  showToast(msg);
+}
+
+// ── Pflege-Aufgaben ───────────────────────────
+// Mapping: Aufgabe → mögliche Inventar-Keys (Qualität absteigend)
+const CARE_MAP = {
+  buerste:  { keys: ['buerste_profi','buerste_gut','buerste_einfach'], hygiene: 20, happiness: 10, taskKey: 'care_buerste' },
+  huf:      { keys: ['hufkratzer_profi','hufkratzer_einf'],            hygiene: 12, happiness: 8,  taskKey: 'care_huf' },
+  schwamm:  { keys: ['schwamm'],                                        hygiene: 18, happiness: 5,  taskKey: 'care_schwamm' },
+};
+
+function renderCareItems() {
+  Object.entries(CARE_MAP).forEach(([taskId, cfg]) => {
+    const row     = document.getElementById('care-' + taskId);
+    const descEl  = document.getElementById('desc-' + taskId);
+    if (!row || !descEl) return;
+
+    // Bestes verfügbares Item finden
+    const inv = gd.inventory || {};
+    let bestKey = null;
+    for (const k of cfg.keys) {
+      const item = inv[k];
+      if (item && item.qty > 0 && item.durability > 0) { bestKey = k; break; }
+    }
+
+    const done = gd.stallTasks && gd.stallTasks[cfg.taskKey];
+    row.classList.toggle('done', !!done);
+
+    if (bestKey) {
+      const item   = inv[bestKey];
+      const maxDur = CARE_MAX_DURABILITY_CLIENT[bestKey] || 10;
+      const label  = CARE_LABELS[bestKey] || bestKey;
+      descEl.textContent = label + ' · 🔧 ' + item.durability + '/' + maxDur + ' Nutzungen';
+      row.style.opacity  = done ? '0.45' : '1';
+      row.style.pointerEvents = done ? 'none' : '';
+    } else {
+      descEl.textContent = 'Kein Artikel im Inventar – im Shop kaufen';
+      row.style.opacity  = '0.35';
+      row.style.pointerEvents = 'none';
+    }
+  });
+}
+
+const CARE_MAX_DURABILITY_CLIENT = {
+  buerste_einfach: 10, buerste_gut: 25, buerste_profi: 60,
+  hufkratzer_einf: 15, hufkratzer_profi: 40, schwamm: 20,
+};
+const CARE_LABELS = {
+  buerste_einfach: 'Einfache Bürste', buerste_gut: 'Gute Bürste', buerste_profi: 'Profi-Bürste',
+  hufkratzer_einf: 'Hufkratzer', hufkratzer_profi: 'Profi-Hufkratzer', schwamm: 'Waschschwamm',
+};
+
+function useCareTask(taskId) {
+  const cfg = CARE_MAP[taskId];
+  if (!cfg) return;
+  if (gd.stallTasks && gd.stallTasks[cfg.taskKey]) return;
+
+  const inv = gd.inventory || {};
+  let bestKey = null;
+  for (const k of cfg.keys) {
+    const item = inv[k];
+    if (item && item.qty > 0 && item.durability > 0) { bestKey = k; break; }
+  }
+  if (!bestKey) { showToast('Kein Artikel im Inventar!', true); return; }
+
+  // Haltbarkeit reduzieren
+  const careItem = gd.inventory[bestKey];
+  careItem.durability -= 1;
+  if (careItem.durability <= 0) {
+    careItem.qty = Math.max(0, careItem.qty - 1);
+    if (careItem.qty > 0) careItem.durability = CARE_MAX_DURABILITY_CLIENT[bestKey];
+    else { careItem.durability = 0; showToast('⚠️ ' + CARE_LABELS[bestKey] + ' verbraucht!'); }
+  }
+
+  // Stats & XP
+  gd = GameData.setStat(gd, 'hygiene',   gd.stats.hygiene   + cfg.hygiene);
+  gd = GameData.setStat(gd, 'happiness', gd.stats.happiness + cfg.happiness);
+  if (!gd.stallTasks) gd.stallTasks = {};
+  gd.stallTasks[cfg.taskKey] = true;
+  const xpMap = { buerste: 12, huf: 8, schwamm: 10 };
+  gd = GameData.addXP(gd, xpMap[taskId] || 10);
+
+  showToast('✓ Gepflegt! +' + cfg.hygiene + ' Sauberkeit');
+  renderCareItems();
+}
+
+// ── Auto-Speichern beim Verlassen ─────────────
+GameData.registerAutosave(() => gd);
+</script>
+</body>
+</html>
