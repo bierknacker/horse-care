@@ -613,12 +613,16 @@ function renderInventory() {
 function useItem(itemId) {
   if (!gd.inventory) gd.inventory = {};
   if (itemId === 'heu') {
-    if (!(gd.inventory.heu > 0)) { showToast('Kein Heu mehr! Kaufe im Shop.', true); return; }
+    if (!(gd.inventory.heu > 0)) { showToast('Kein Heu mehr! Im Shop kaufen 🛒', true);
+    setTimeout(() => { GameData.save(gd); window.location.href='shop.html'; }, 1200);
+    return; }
     gd.inventory.heu -= 1;
     gd = GameData.setStat(gd, 'hunger', gd.stats.hunger + 20);
     showToast('Heu verfüttert 🌾');
   } else if (itemId === 'mash') {
-    if (!(gd.inventory.mash > 0)) { showToast('Kein Mash mehr! Kaufe im Shop.', true); return; }
+    if (!(gd.inventory.mash > 0)) { showToast('Kein Mash mehr! Im Shop kaufen 🛒', true);
+    setTimeout(() => { GameData.save(gd); window.location.href='shop.html'; }, 1200);
+    return; }
     gd.inventory.mash -= 1;
     gd = GameData.setStat(gd, 'hunger', gd.stats.hunger + 25);
     gd = GameData.setStat(gd, 'energy', gd.stats.energy + 30);
@@ -695,7 +699,9 @@ function useCareTask(taskId) {
     const item = inv[k];
     if (item && item.qty > 0 && item.durability > 0) { bestKey = k; break; }
   }
-  if (!bestKey) { showToast('Kein Artikel im Inventar!', true); return; }
+  if (!bestKey) { showToast('Kein Artikel im Inventar! Im Shop kaufen 🛒', true);
+  setTimeout(() => { GameData.save(gd); window.location.href='shop.html'; }, 1500);
+  return; }
 
   // Haltbarkeit reduzieren
   const careItem = gd.inventory[bestKey];
