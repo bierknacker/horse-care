@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Horse Care</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Crimson+Pro:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width:100%; height:100svh; overflow:hidden;
+  background:#0a1a12;
+}
+
+.splash {
+  position:relative;
+  width:100%; height:100svh;
+  max-width:430px; margin:0 auto;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  overflow:hidden;
+}
+
+/* ── Hintergrund: Aquarell-Verlauf wie Titelscreen ── */
+.bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 80% 40% at 70% 15%, rgba(255,255,255,0.45) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 30% at 20% 25%, rgba(255,255,255,0.3)  0%, transparent 55%),
+    radial-gradient(ellipse 100% 70% at 50% 80%, #6bbfab 0%, #8dd4c2 40%, #aeddd0 70%, transparent 100%),
+    linear-gradient(175deg, #b8e4d8 0%, #98d3c2 30%, #7ec4b0 60%, #6bbaaa 100%);
+  opacity:0;
+  animation: bgFade 0.8s ease 0.1s forwards;
+}
+
+/* Aquarell-Wolken */
+.cloud { position:absolute; background:rgba(255,255,255,0.6); border-radius:50%; filter:blur(18px); opacity:0; animation: cloudFade 1s ease 0.4s forwards; }
+.c1 { width:180px; height:75px; top:4%;  right:-20px; }
+.c2 { width:140px; height:60px; top:11%; right:35px;  filter:blur(12px); background:rgba(255,255,255,0.45); }
+.c3 { width:120px; height:55px; top:7%;  left:-10px; }
+.c4 { width:200px; height:65px; top:2%;  left:30px;  background:rgba(255,255,255,0.35); filter:blur(22px); }
+
+/* Aquarell-Flecken unten */
+.w1 { position:absolute; width:300px; height:200px; bottom:8%;  left:-80px;  background:#3a9e84; filter:blur(40px); border-radius:50%; opacity:0; animation: wFade 1.2s ease 0.3s forwards; }
+.w2 { position:absolute; width:250px; height:180px; bottom:4%;  right:-60px; background:#2d8c74; filter:blur(35px); border-radius:50%; opacity:0; animation: wFade 1.2s ease 0.5s forwards; }
+
+/* ── Fohlen ── */
+.foal-wrap {
+  position:relative; z-index:10;
+  width:clamp(130px, 52%, 200px);
+  opacity:0;
+  transform:translateY(30px);
+  animation: foalRise 1s cubic-bezier(0.22,1,0.36,1) 0.5s forwards;
+}
+.foal-wrap img {
+  width:100%; height:auto;
+  max-height:clamp(160px, 38svh, 220px);
+  object-fit:contain;
+  display:block;
+  filter:drop-shadow(0 12px 30px rgba(0,0,0,0.25));
+}
+
+/* ── Titel ── */
+.title-wrap {
+  position:relative; z-index:10;
+  text-align:center; margin-top:16px;
+  opacity:0;
+  animation: titleFade 1s ease 1.0s forwards;
+}
+.title-main {
+  font-family:'Great Vibes', cursive;
+  font-size:clamp(52px, 14vw, 70px);
+  color:#1a2820;
+  line-height:1;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.12);
+  letter-spacing:2px;
+}
+.title-sub {
+  font-family:'Crimson Pro', serif;
+  font-size:clamp(12px, 3.5vw, 15px);
+  font-style:italic; font-weight:300;
+  color:rgba(26,40,32,0.55);
+  letter-spacing:3px; text-transform:uppercase;
+  margin-top:4px;
+}
+
+/* ── Lade-Punkte ── */
+.dots-wrap {
+  position:relative; z-index:10;
+  display:flex; gap:8px; margin-top:28px;
+  opacity:0;
+  animation: titleFade 0.6s ease 1.6s forwards;
+}
+.dot {
+  width:7px; height:7px; border-radius:50%;
+  background:rgba(26,40,32,0.3);
+}
+.dot:nth-child(1) { animation: dotPulse 1s ease 1.8s infinite; }
+.dot:nth-child(2) { animation: dotPulse 1s ease 2.0s infinite; }
+.dot:nth-child(3) { animation: dotPulse 1s ease 2.2s infinite; }
+
+/* ── Keyframes ── */
+@keyframes bgFade {
+  to { opacity:1; }
+}
+@keyframes cloudFade {
+  to { opacity:1; }
+}
+@keyframes wFade {
+  to { opacity:0.15; }
+}
+@keyframes foalRise {
+  to { opacity:1; transform:translateY(0); }
+}
+@keyframes titleFade {
+  to { opacity:1; }
+}
+@keyframes dotPulse {
+  0%,100% { background:rgba(26,40,32,0.2); transform:scale(1); }
+  50%      { background:rgba(26,40,32,0.6); transform:scale(1.3); }
+}
+
+/* ── Überblend zu Titelscreen ── */
+.transition-overlay {
+  position:fixed; inset:0; z-index:100;
+  background:#0a1a12;
+  opacity:0; pointer-events:none;
+  animation: fadeOut 0.4s ease 0.2s forwards;
+}
+.transition-overlay.leaving {
+  animation: fadeToBlack 0.5s ease forwards !important;
+}
+@keyframes fadeOut {
+  to { opacity:0; }
+}
+@keyframes fadeToBlack {
+  to { opacity:1; }
+}
+
+/* SE */
+@media screen and (max-height: 680px) {
+  .title-main  { font-size: clamp(44px, 12vw, 58px); }
+  .dots-wrap   { margin-top: 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="splash">
+  <div class="bg"></div>
+  <div class="cloud c4"></div>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+  <div class="w1"></div>
+  <div class="w2"></div>
+
+  <div class="foal-wrap">
+    <img src="fohlen.png" alt="Fohlen">
+  </div>
+
+  <div class="title-wrap">
+    <div class="title-main">Horse Care</div>
+    <div class="title-sub">Dein Pferd wartet auf dich</div>
+  </div>
+
+  <div class="dots-wrap">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+</div>
+
+<div class="transition-overlay" id="overlay"></div>
+
+<script>
+// Nach 2.8s weiter zum Titelscreen
+setTimeout(() => {
+  const overlay = document.getElementById('overlay');
+  overlay.classList.add('leaving');
+  setTimeout(() => {
+    window.location.href = 'titlescreen.html';
+  }, 500);
+}, 2800);
+</script>
+
+</body>
+</html>

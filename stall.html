@@ -72,6 +72,53 @@ body {
 /* ── SPACER (Stallbild dominiert) ── */
 .spacer { flex:1; }
 
+/* ── STATUS-LEISTE oben ── */
+.stat-strip {
+  position:relative; z-index:20;
+  background:rgba(0,0,0,0.35);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  padding:8px 14px;
+  display:flex; flex-direction:column; gap:4px;
+  flex-shrink:0;
+}
+.stat-row-s {
+  display:flex; align-items:center; gap:7px;
+}
+.stat-icon-s {
+  width:20px; height:20px; object-fit:contain; flex-shrink:0;
+}
+.stat-label-s {
+  font-size:10px; font-weight:600; color:rgba(255,255,255,0.6);
+  width:62px; flex-shrink:0; text-transform:uppercase; letter-spacing:.5px;
+}
+.stat-bar-bg-s {
+  flex:1; height:6px; background:rgba(255,255,255,0.1);
+  border-radius:10px; overflow:hidden;
+}
+.stat-bar-fill-s {
+  height:100%; border-radius:10px; transition:width .5s ease;
+}
+.fill-hunger    { background:linear-gradient(90deg,#a8d8ea,#5ea7c5); }
+.fill-thirst    { background:linear-gradient(90deg,#74b9ff,#0984e3); }
+.fill-energy    { background:linear-gradient(90deg,#fd79a8,#e84393); }
+.fill-hygiene   { background:linear-gradient(90deg,#4ecdc4,#1a9e75); }
+.fill-happiness { background:linear-gradient(90deg,#f9c74f,#f4a261); }
+.stat-pct-s {
+  font-size:10px; font-weight:600; color:rgba(255,255,255,0.6);
+  width:26px; text-align:right; flex-shrink:0;
+}
+/* Kritisch: rot blinken */
+.stat-bar-fill-s.critical {
+  background:linear-gradient(90deg,#ff6b6b,#dc3545) !important;
+  animation:criticalPulse 1.2s ease-in-out infinite;
+}
+@keyframes criticalPulse {
+  0%,100% { opacity:1; }
+  50%      { opacity:0.5; }
+}
+
 /* ── AKTIONS-PANEL unten ── */
 .action-panel {
   position:relative; z-index:20;
@@ -282,6 +329,40 @@ body {
     </div>
   </div>
 
+  <!-- Status-Leiste -->
+  <div class="stat-strip" id="statStrip">
+    <div class="stat-row-s">
+      <img class="stat-icon-s" src="icon_heuballen.png" alt="Hunger">
+      <span class="stat-label-s">Hunger</span>
+      <div class="stat-bar-bg-s"><div class="stat-bar-fill-s fill-hunger" id="sbar-hunger" style="width:0%"></div></div>
+      <span class="stat-pct-s" id="spct-hunger">0%</span>
+    </div>
+    <div class="stat-row-s">
+      <img class="stat-icon-s" src="icon_traenke.png" alt="Durst">
+      <span class="stat-label-s">Durst</span>
+      <div class="stat-bar-bg-s"><div class="stat-bar-fill-s fill-thirst" id="sbar-thirst" style="width:0%"></div></div>
+      <span class="stat-pct-s" id="spct-thirst">0%</span>
+    </div>
+    <div class="stat-row-s">
+      <img class="stat-icon-s" src="icon_mash.png" alt="Energie">
+      <span class="stat-label-s">Energie</span>
+      <div class="stat-bar-bg-s"><div class="stat-bar-fill-s fill-energy" id="sbar-energy" style="width:0%"></div></div>
+      <span class="stat-pct-s" id="spct-energy">0%</span>
+    </div>
+    <div class="stat-row-s">
+      <img class="stat-icon-s" src="icon_sauberkeit.png" alt="Sauberkeit">
+      <span class="stat-label-s">Sauberkeit</span>
+      <div class="stat-bar-bg-s"><div class="stat-bar-fill-s fill-hygiene" id="sbar-hygiene" style="width:0%"></div></div>
+      <span class="stat-pct-s" id="spct-hygiene">0%</span>
+    </div>
+    <div class="stat-row-s">
+      <img class="stat-icon-s" src="icon_glueck.png" alt="Zufriedenheit">
+      <span class="stat-label-s">Zufrieden</span>
+      <div class="stat-bar-bg-s"><div class="stat-bar-fill-s fill-happiness" id="sbar-happiness" style="width:0%"></div></div>
+      <span class="stat-pct-s" id="spct-happiness">0%</span>
+    </div>
+  </div>
+
   <div class="spacer"></div>
 
   <!-- Aktions-Panel -->
@@ -447,9 +528,26 @@ function restoreTasks() {
     }
   });
 }
+// ── Stats rendern ─────────────────────────────
+function renderStats() {
+  const s = gd.stats;
+  const keys = ['hunger','thirst','energy','hygiene','happiness'];
+  keys.forEach(k => {
+    const val = Math.round(s[k] || 0);
+    const bar = document.getElementById('sbar-' + k);
+    const pct = document.getElementById('spct-' + k);
+    if (bar) {
+      bar.style.width = val + '%';
+      bar.classList.toggle('critical', val <= 15);
+    }
+    if (pct) pct.textContent = val + '%';
+  });
+}
+
 restoreTasks();
 renderInventory();
 renderCareItems();
+renderStats();
 
 // Aufgabe abhaken
 function completeTask(id) {
@@ -521,12 +619,14 @@ function useItem(itemId) {
     showToast('Mash gefüttert ⚡');
   }
   renderInventory();
+  renderStats();
 }
 
 // ── Gratis-Wasser ─────────────────────────────
 function feedHorse(stat, amount, msg) {
   gd = GameData.setStat(gd, stat, gd.stats[stat] + amount);
   showToast(msg);
+  renderStats();
 }
 
 // ── Pflege-Aufgaben ───────────────────────────
@@ -610,6 +710,7 @@ function useCareTask(taskId) {
 
   showToast('✓ Gepflegt! +' + cfg.hygiene + ' Sauberkeit');
   renderCareItems();
+  renderStats();
 }
 
 // ── Auto-Speichern beim Verlassen ─────────────
