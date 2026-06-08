@@ -77,12 +77,19 @@ body {
 
 /* Pferd-Bild */
 .horse-stage {
-  width:68%; max-width:240px;
+  width:clamp(120px, 60%, 220px);
+  max-width:220px;
   position:relative;
   animation:floatIn .4s ease both;
+  display:flex; align-items:flex-end; justify-content:center;
 }
 .horse-stage img {
-  width:100%; display:block;
+  width:auto;
+  height:auto;
+  max-width:100%;
+  max-height:clamp(140px, 32svh, 210px);
+  object-fit:contain;
+  display:block;
   filter:drop-shadow(0 10px 28px rgba(0,0,0,0.45));
   transition:opacity .25s;
 }
@@ -210,7 +217,9 @@ body {
   transform:translateY(0);
 }
 .name-horse-img {
-  width:100px; height:100px; object-fit:contain;
+  width:auto; height:auto;
+  max-width:100px; max-height:100px;
+  object-fit:contain;
   filter:drop-shadow(0 6px 16px rgba(0,0,0,0.4));
 }
 .name-title {

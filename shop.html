@@ -2,13 +2,13 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Horse Care – Shop</title>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
-  width:100vw; height:100vh; overflow:hidden;
+  width:100vw; height:100svh; overflow:hidden;
   background:#0e1a0a; font-family:'Crimson Pro', serif;
 }
 .screen {
@@ -201,6 +201,112 @@ body {
   15%  { opacity:1; transform:translateX(-50%) translateY(0); }
   80%  { opacity:1; }
   100% { opacity:0; transform:translateX(-50%) translateY(-8px); }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE – iPhone SE (375×667) Support
+   ══════════════════════════════════════════ */
+
+/* Nutze dvh (dynamic viewport height) wo verfügbar,
+   fallback auf 100vh für ältere Safari */
+:root {
+  --vh: 1vh;
+  --screen-h: 100vh;
+}
+
+/* Safe-area für Home-Indicator (neuere iPhones) */
+.screen, body {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* SE-spezifische Verkleinerungen */
+@media screen and (max-height: 680px) {
+  /* Coin-Info auf kleinen Screens ausblenden */
+  .coin-info { display: none !important; }
+
+  /* Kleinere Schrift & Abstände generell */
+  body { font-size: 13px; }
+
+  /* Header kompakter */
+  .header { padding: 10px 14px 6px !important; }
+
+  /* Panels kompakter */
+  .action-panel, .bottom-zone, .info-panel {
+    padding: 8px 12px 10px !important;
+  }
+
+  /* Abstände reduzieren */
+  .section-title { margin: 8px 0 5px !important; }
+  .tasks { gap: 5px !important; }
+  .menu-grid { gap: 5px !important; }
+  .status-section { margin-bottom: 5px !important; }
+  .status-row { margin-bottom: 3px !important; }
+  .xp-row { margin-bottom: 5px !important; }
+  .treatment-list { gap: 5px !important; }
+
+  /* Kleinere Icons in Grids */
+  .menu-btn img { width: 34px !important; height: 34px !important; }
+  .menu-btn { padding: 5px 4px 4px !important; border-radius: 12px !important; }
+  .menu-btn span { font-size: 9px !important; }
+
+  /* Kleinere Task-Rows */
+  .task-row { padding: 7px 10px !important; }
+  .task-icon { width: 32px !important; height: 32px !important; }
+  .task-name { font-size: 13px !important; }
+  .task-desc { font-size: 10px !important; }
+
+  /* Status-Icons kleiner */
+  .status-icon-sm { width: 20px !important; height: 20px !important; }
+  .status-label { font-size: 10px !important; width: 60px !important; }
+  .bar-bg { height: 6px !important; }
+  .bar-pct { font-size: 10px !important; }
+
+  /* Zeitanzeige kompakter */
+  .time-bar { padding: 4px 10px !important; margin-bottom: 5px !important; }
+  .time-display { font-size: 15px !important; }
+
+  /* Münz-Badge */
+  .coins-badge { padding: 4px 10px !important; }
+  .coins-amount { font-size: 14px !important; }
+
+  /* Wetter-Info-Bar */
+  .weather-info-bar { padding: 5px 10px !important; margin-bottom: 5px !important; font-size: 10px !important; }
+  .weather-info-icon { font-size: 14px !important; }
+
+  /* Feed-Buttons im Stall */
+  .menu-btn-feed { padding: 6px 4px 4px !important; }
+  .menu-btn-feed img { width: 30px !important; height: 30px !important; }
+
+  /* Shop-Grid enger */
+  .items-grid { gap: 7px !important; }
+  .item-img { width: 44px !important; height: 44px !important; }
+  .item-name { font-size: 12px !important; }
+  .item-desc { font-size: 9px !important; }
+  .item-price { font-size: 11px !important; padding: 3px 9px !important; }
+
+  /* Behandlungs-Buttons im Tierarzt */
+  .treatment-btn { padding: 9px 12px !important; }
+  .treat-icon { width: 34px !important; height: 34px !important; }
+  .treat-name { font-size: 13px !important; }
+  .treat-desc { font-size: 10px !important; }
+
+  /* Stat-Karten */
+  .stat-card { padding: 6px 8px !important; }
+  .stat-card img { width: 20px !important; height: 20px !important; }
+  .stat-card-val { font-size: 14px !important; }
+
+  /* Tierarzt-Hero kleiner */
+  .vet-hero { height: 140px !important; }
+  #vetImg { height: 150px !important; }
+}
+
+/* Noch kleinere Geräte (z.B. iPhone SE 1. Gen, 568px Höhe) */
+@media screen and (max-height: 580px) {
+  .vet-hero { height: 110px !important; }
+  #vetImg { height: 120px !important; }
+  .header-title { font-size: 26px !important; }
+  .game-title { font-size: clamp(28px, 8vw, 38px) !important; }
+  .foal-wrap { width: 45% !important; }
 }
 </style>
 </head>

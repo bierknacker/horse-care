@@ -79,9 +79,20 @@ body {
 
 .foal-wrap {
   position:absolute; bottom:0; left:50%; transform:translateX(-50%);
-  width:52%; max-width:200px; z-index:10;
+  width:clamp(120px, 45%, 190px);
+  max-height:48%;
+  z-index:10;
+  display:flex; align-items:flex-end; justify-content:center;
 }
-.foal-wrap img { width:100%; display:block; filter:drop-shadow(0 8px 20px rgba(0,0,0,0.4)); }
+.foal-wrap img {
+  width:auto;
+  height:auto;
+  max-width:100%;
+  max-height:clamp(150px, 42svh, 220px);
+  object-fit:contain;
+  display:block;
+  filter:drop-shadow(0 8px 20px rgba(0,0,0,0.4));
+}
 
 /* ── UNTERE HÄLFTE ── */
 .bottom-zone {
@@ -360,7 +371,8 @@ body {
   #vetImg { height: 120px !important; }
   .header-title { font-size: 26px !important; }
   .game-title { font-size: clamp(28px, 8vw, 38px) !important; }
-  .foal-wrap { width: 45% !important; }
+  .foal-wrap { width: clamp(100px, 40%, 160px) !important; }
+  .foal-wrap img { max-height: clamp(120px, 36svh, 170px) !important; }
 }
 </style>
 </head>
