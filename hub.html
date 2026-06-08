@@ -62,7 +62,7 @@ body {
   z-index:10;
   transition:opacity .6s;
 }
-#daytimeEmoji { font-size:15px; }
+#daytimeLabel { color:#1a3d2e; font-weight:700; }
 
 /* Level-Badge oben rechts */
 .level-badge {
@@ -187,14 +187,13 @@ body {
 /* Wetter-Badge neben Daytime-Badge */
 .weather-badge {
   position:absolute; top:10%; left:5%;
-  background:rgba(255,255,255,0.95);
-  border:1px solid rgba(180,210,200,0.7);
-  border-radius:50px; padding:6px 14px;
-  backdrop-filter:blur(6px);
-  font-size:13px; color:#2d5a4a; font-weight:700;
-  display:flex; align-items:center; gap:6px;
+  background:#ffffff;
+  border:1.5px solid rgba(100,150,130,0.5);
+  border-radius:50px; padding:7px 16px;
+  font-size:13px; color:#1a3d2e; font-weight:700;
+  display:flex; align-items:center; gap:7px;
   z-index:10;
-  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  box-shadow:0 3px 10px rgba(0,0,0,0.12);
 }
 
 /* Wettereffekt-Info-Leiste */
@@ -404,7 +403,6 @@ body {
       <span id="weatherLabel">Sonnig</span>
     </div>
     <div class="daytime-badge">
-      <span id="daytimeEmoji">🌅</span>
       <span id="daytimeLabel">Morgen</span>
     </div>
 
@@ -547,30 +545,18 @@ function updateClock(force) {
     document.querySelectorAll('.bg-layer').forEach(el => el.classList.remove('active'));
     const bgEl = document.getElementById('bg-' + period.id);
     if (bgEl) bgEl.classList.add('active');
-    const emoji = document.getElementById('daytimeEmoji');
     const label = document.getElementById('daytimeLabel');
-    if (emoji) emoji.textContent = period.emoji;
     if (label) label.textContent = period.label;
   }
 }
 
-// ── Spielstand ────────────────────────────────────────────
+// ── Spielstand laden ──────────────────────────────────────
 let gd = GameData.load();
 
 // Kein Spielstand → zurück zum Start
 if (!gd.race) {
   window.location.href = 'titlescreen.html';
-}
-
-// Pferdename SOFORT setzen (vor allen anderen Funktionen)
-if (gd.horseName) {
-  document.addEventListener('DOMContentLoaded', () => {
-    const t = document.getElementById('gameTitle');
-    if (t) t.textContent = gd.horseName;
-  });
-  // Falls DOM schon bereit
-  const t = document.getElementById('gameTitle');
-  if (t) t.textContent = gd.horseName;
+  throw new Error('No save - redirecting');
 }
 
 // ── Münzen aufrechnen ─────────────────────────────────────
@@ -756,13 +742,24 @@ window.addEventListener('pageshow', (e) => {
 GameData.registerAutosave(() => gd);
 
 // ── Init ──────────────────────────────────────────────────
-gd = WeatherSystem.load(gd);
-accrueCoins();
-renderAll();
-renderWeather();
-updateClock(true);
+function initHub() {
+  gd = WeatherSystem.load(gd);
+  accrueCoins();
+  currentPeriodId = null; // erzwingt Tageszeit-Update
+  renderAll();
+  renderWeather();
+  updateClock(true);
+}
+
+// Sofort versuchen, falls DOM bereits da ist
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initHub);
+} else {
+  initHub();
+}
+
 setInterval(() => updateClock(false), 15000);
-setInterval(runDecay,    60000);
+setInterval(runDecay, 60000);
 
 function confirmNewGame() {
   if (confirm('Möchtest du wirklich ein neues Pferd starten? Dein aktueller Fortschritt geht verloren.')) {
