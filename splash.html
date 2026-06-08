@@ -144,6 +144,12 @@ html, body {
   .dots-wrap   { margin-top: 18px; }
 }
 </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Horse Care">
+  <meta name="theme-color" content="#0a1a12">
+  <link rel="apple-touch-icon" href="fohlen.png">
 </head>
 <body>
 
@@ -175,12 +181,25 @@ html, body {
 <div class="transition-overlay" id="overlay"></div>
 
 <script>
-// Nach 2.8s weiter zum Titelscreen
+// Spielstand prüfen
+function getNextPage() {
+  try {
+    const raw = localStorage.getItem('horsecare_save');
+    if (raw) {
+      const data = JSON.parse(raw);
+      // Pferd existiert bereits → direkt zum Hub
+      if (data && data.race && data.horseName) return 'hub.html';
+    }
+  } catch(e) {}
+  return 'titlescreen.html';
+}
+
+// Nach 2.8s weiterleiten
 setTimeout(() => {
   const overlay = document.getElementById('overlay');
   overlay.classList.add('leaving');
   setTimeout(() => {
-    window.location.href = 'titlescreen.html';
+    window.location.href = getNextPage();
   }, 500);
 }, 2800);
 </script>

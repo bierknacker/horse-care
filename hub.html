@@ -375,6 +375,12 @@ body {
   .foal-wrap img { max-height: clamp(120px, 36svh, 170px) !important; }
 }
 </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Horse Care">
+  <meta name="theme-color" content="#0a1a12">
+  <link rel="apple-touch-icon" href="fohlen.png">
 </head>
 <body>
 <div class="screen">
@@ -388,7 +394,7 @@ body {
     <div class="bg-layer" id="bg-abends"></div>
     <div class="bg-layer" id="bg-nachts"></div>
 
-    <div class="game-title">Horse Care</div>
+    <div class="game-title" id="gameTitle">Horse Care</div>
 
     <div class="weather-badge" id="weatherBadge">
       <span id="weatherEmoji">☀️</span>
@@ -477,6 +483,17 @@ body {
         <img src="icon_glueck.png" alt="Tierarzt">
         <span>Tierarzt</span>
       </button>
+    </div>
+
+    <!-- Neues Spiel starten -->
+    <div style="text-align:center; margin-top:8px;">
+      <button onclick="confirmNewGame()" style="
+        background:none; border:none;
+        font-family:'Crimson Pro',serif; font-size:11px;
+        color:rgba(255,255,255,0.2); cursor:pointer;
+        letter-spacing:1px; text-decoration:underline;
+        -webkit-tap-highlight-color:transparent;
+      ">Neues Pferd starten</button>
     </div>
 
   </div>
@@ -569,17 +586,19 @@ function renderAll() {
   if (hubCoins) hubCoins.textContent = Math.floor(gd.coins || 0);
 
   // Pferdename als Titel
-  const titleEl = document.querySelector('.game-title');
-  if (titleEl && gd.horseName) titleEl.textContent = gd.horseName;
+  const titleEl = document.getElementById('gameTitle');
+  if (titleEl) titleEl.textContent = gd.horseName || 'Horse Care';
 
   // Rassename Untertitel
   let sub = document.getElementById('raceSub');
-  if (!sub && gd.race) {
-    sub = document.createElement('div');
-    sub.id = 'raceSub';
-    sub.style.cssText = 'font-family:Crimson Pro,serif;font-size:13px;color:rgba(255,255,255,0.65);letter-spacing:2px;text-transform:uppercase;margin-top:-4px;text-shadow:0 1px 4px rgba(0,0,0,0.4);position:relative;z-index:10;text-align:center;';
+  if (gd.race) {
+    if (!sub) {
+      sub = document.createElement('div');
+      sub.id = 'raceSub';
+      sub.style.cssText = 'font-family:Crimson Pro,serif;font-size:13px;color:rgba(255,255,255,0.65);letter-spacing:2px;text-transform:uppercase;margin-top:-4px;text-shadow:0 1px 4px rgba(0,0,0,0.4);position:relative;z-index:10;text-align:center;';
+      if (titleEl) titleEl.insertAdjacentElement('afterend', sub);
+    }
     sub.textContent = gd.race.name;
-    if (titleEl) titleEl.insertAdjacentElement('afterend', sub);
   }
 
   // XP-Akzentfarbe
@@ -688,8 +707,10 @@ document.addEventListener('visibilitychange', () => {
     gd = GameData.load();
     accrueCoins();
     gd = WeatherSystem.load(gd);
+    currentPeriodId = null; // Tageszeit-Badge neu setzen erzwingen
     renderAll();
     renderWeather();
+    updateClock();
   }
 });
 
@@ -698,6 +719,7 @@ window.addEventListener('pageshow', (e) => {
   gd = GameData.load();
   accrueCoins();
   gd = WeatherSystem.load(gd);
+  currentPeriodId = null; // Tageszeit-Badge neu setzen erzwingen
   renderAll();
   renderWeather();
   updateClock();
@@ -709,11 +731,19 @@ GameData.registerAutosave(() => gd);
 // ── Init ──────────────────────────────────────────────────
 gd = WeatherSystem.load(gd);
 accrueCoins();
+currentPeriodId = null;
 renderAll();
 renderWeather();
 updateClock();
 setInterval(updateClock, 15000);
 setInterval(runDecay,    60000);
+
+function confirmNewGame() {
+  if (confirm('Möchtest du wirklich ein neues Pferd starten? Dein aktueller Fortschritt geht verloren.')) {
+    GameData.reset();
+    window.location.href = 'titlescreen.html';
+  }
+}
 
 function showMenu(name) {
   alert('Bereich: ' + name + ' (noch nicht implementiert)');
