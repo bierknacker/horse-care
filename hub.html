@@ -10,7 +10,7 @@
 
 body {
   width:100vw; height:100svh; overflow:hidden;
-  background:#1a2820;
+  background:#f0f7f4;
   font-family:'Crimson Pro', serif;
 }
 
@@ -53,8 +53,8 @@ body {
 /* Tageszeit-Badge oben links */
 .daytime-badge {
   position:absolute; top:10%; left:5%;
-  background:rgba(0,0,0,0.35);
-  border:1px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.75);
+  border:1px solid rgba(180,210,200,0.6);
   border-radius:50px; padding:4px 12px;
   backdrop-filter:blur(6px);
   font-size:12px; color:#fff; font-weight:600;
@@ -67,15 +67,15 @@ body {
 /* Level-Badge oben rechts */
 .level-badge {
   position:absolute; top:10%; right:5%;
-  background:rgba(0,0,0,0.35);
-  border:1px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.75);
+  border:1px solid rgba(180,210,200,0.6);
   border-radius:50px; padding:4px 14px;
   backdrop-filter:blur(6px);
   font-size:13px; color:#fff; font-weight:600;
   display:flex; align-items:center; gap:4px;
   z-index:10;
 }
-.level-badge .lvl-num { font-size:17px; }
+.level-badge .lvl-num { font-size:17px; color:#2d5a4a; }
 
 .foal-wrap {
   position:absolute; bottom:0; left:50%; transform:translateX(-50%);
@@ -96,27 +96,28 @@ body {
 
 /* ── UNTERE HÄLFTE ── */
 .bottom-zone {
-  background:rgba(20,35,28,0.82);
+  background:rgba(255,255,255,0.92);
   backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);
-  border-top:1px solid rgba(255,255,255,0.15);
+  border-top:1px solid rgba(180,210,200,0.5);
   padding:9px 14px 12px;
   flex-shrink:0;
   overflow-y:auto;
   -webkit-overflow-scrolling:touch;
   max-height:55vh;
+  box-shadow:0 -4px 20px rgba(100,160,140,0.1);
 }
 
 .time-bar {
   display:flex; align-items:center; justify-content:space-between;
-  background:rgba(255,255,255,0.1); border-radius:12px; padding:5px 12px;
+  background:rgba(240,247,244,0.9); border-radius:12px; border:1px solid rgba(180,210,200,0.4); padding:5px 12px;
   margin-bottom:8px;
 }
-.time-label { font-size:11px; color:rgba(255,255,255,0.6); }
+.time-label { font-size:11px; color:rgba(45,90,74,0.6); }
 .time-display {
-  font-family:'Crimson Pro'; font-size:18px; font-weight:600; color:#fff;
+  font-family:'Crimson Pro'; font-size:18px; font-weight:600; color:#2d5a4a;
 }
-.day-label { font-size:11px; color:rgba(255,255,255,0.6); }
+.day-label { font-size:11px; color:rgba(45,90,74,0.6); }
 
 .status-section { margin-bottom:7px; }
 
@@ -127,10 +128,10 @@ body {
   width:24px; height:24px; object-fit:contain; flex-shrink:0;
 }
 .status-label {
-  font-size:11px; color:rgba(255,255,255,0.85); font-weight:600; width:68px; flex-shrink:0;
+  font-size:11px; color:rgba(45,90,74,0.85); font-weight:600; width:68px; flex-shrink:0;
 }
 .bar-bg {
-  flex:1; height:7px; background:rgba(255,255,255,0.1);
+  flex:1; height:7px; background:rgba(180,210,200,0.3);
   border-radius:10px; overflow:hidden;
 }
 .bar-fill {
@@ -142,37 +143,38 @@ body {
 .bar-fill.thirst    { background:linear-gradient(90deg,#74b9ff,#0984e3); }
 .bar-fill.energy    { background:linear-gradient(90deg,#fd79a8,#e84393); }
 .bar-pct {
-  font-size:11px; color:rgba(255,255,255,0.75); font-weight:600; width:28px; text-align:right;
+  font-size:11px; color:rgba(45,90,74,0.7); font-weight:600; width:28px; text-align:right;
 }
 
 .xp-row {
   display:flex; align-items:center; gap:8px; margin-bottom:8px;
 }
-.xp-label { font-size:11px; color:rgba(255,255,255,0.75); font-weight:600; }
-.xp-bg { flex:1; height:6px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden; }
+.xp-label { font-size:11px; color:rgba(45,90,74,0.7); font-weight:600; }
+.xp-bg { flex:1; height:6px; background:rgba(180,210,200,0.3); border-radius:10px; overflow:hidden; }
 .xp-fill {
   height:100%; border-radius:10px;
   background:linear-gradient(90deg,#a29bfe,#6c5ce7);
   transition:width .4s;
 }
-.xp-pct { font-size:11px; color:rgba(255,255,255,0.75); font-weight:600; width:28px; text-align:right; }
+.xp-pct { font-size:11px; color:rgba(45,90,74,0.7); font-weight:600; width:28px; text-align:right; }
 
 .menu-grid {
   display:grid; grid-template-columns:repeat(4,1fr); gap:7px;
 }
 .menu-btn {
-  background:rgba(255,255,255,0.12);
-  border:1px solid rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.9);
+  border:1px solid rgba(180,210,200,0.6);
+  box-shadow:0 2px 8px rgba(100,160,140,0.12);
   border-radius:14px; padding:7px 4px 5px;
   display:flex; flex-direction:column; align-items:center; gap:3px;
   cursor:pointer;
   transition:transform .15s, background .15s;
   -webkit-tap-highlight-color:transparent;
 }
-.menu-btn:active { transform:scale(.95); background:rgba(255,255,255,0.22); }
+.menu-btn:active { transform:scale(.95); background:rgba(240,247,244,0.95); }
 .menu-btn img { width:40px; height:40px; object-fit:contain; }
 .menu-btn span {
-  font-size:10px; font-weight:600; color:rgba(255,255,255,0.9); text-align:center;
+  font-size:10px; font-weight:600; color:#2d5a4a; text-align:center;
 }
 
 /* ── WETTER-OVERLAY ── */
@@ -185,11 +187,11 @@ body {
 /* Wetter-Badge neben Daytime-Badge */
 .weather-badge {
   position:absolute; top:10%; left:5%;
-  background:rgba(0,0,0,0.35);
-  border:1px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.75);
+  border:1px solid rgba(180,210,200,0.6);
   border-radius:50px; padding:4px 12px;
   backdrop-filter:blur(6px);
-  font-size:12px; color:#fff; font-weight:600;
+  font-size:12px; color:#2d5a4a; font-weight:600;
   display:flex; align-items:center; gap:5px;
   z-index:10;
 }
@@ -199,7 +201,7 @@ body {
   position:relative; z-index:10;
   margin:0 14px 8px;
   border-radius:12px; padding:7px 12px;
-  font-size:11px; color:#fff;
+  font-size:11px; color:#2d5a4a;
   display:flex; align-items:center; gap:8px;
   backdrop-filter:blur(6px);
   border:1px solid rgba(255,255,255,0.12);
@@ -207,7 +209,7 @@ body {
   flex-shrink:0;
 }
 .weather-info-icon { font-size:18px; flex-shrink:0; }
-.weather-info-text { flex:1; line-height:1.3; opacity:.85; }
+.weather-info-text { flex:1; line-height:1.3; opacity:.8; color:#2d5a4a; }
 .weather-blocked {
   font-size:10px; color:#ff6b6b; font-weight:600;
   background:rgba(220,53,69,0.2); border-radius:50px;
@@ -490,7 +492,7 @@ body {
       <button onclick="confirmNewGame()" style="
         background:none; border:none;
         font-family:'Crimson Pro',serif; font-size:11px;
-        color:rgba(255,255,255,0.2); cursor:pointer;
+        color:rgba(45,90,74,0.35); cursor:pointer;
         letter-spacing:1px; text-decoration:underline;
         -webkit-tap-highlight-color:transparent;
       ">Neues Pferd starten</button>

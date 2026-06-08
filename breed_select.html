@@ -11,7 +11,7 @@
 body {
   width:100vw; height:100svh; overflow:hidden;
   font-family:'Crimson Pro', serif;
-  background:#0a0a12;
+  background:#f0f7f4;
 }
 
 .screen {
@@ -43,11 +43,11 @@ body {
 }
 .header-sub {
   font-size:12px; letter-spacing:2.5px; text-transform:uppercase;
-  color:rgba(255,255,255,0.5); margin-bottom:4px;
+  color:rgba(45,90,74,0.55); margin-bottom:4px;
 }
 .header-title {
   font-family:'Great Vibes'; font-size:clamp(36px,10vw,48px);
-  color:#fff; text-shadow:0 2px 12px rgba(0,0,0,0.4);
+  color:#2d5a4a; text-shadow:0 2px 12px rgba(0,0,0,0.4);
 }
 
 /* ── CAROUSEL ── */
@@ -63,9 +63,9 @@ body {
 .arrow {
   position:absolute; top:50%; transform:translateY(-50%);
   z-index:20; width:44px; height:44px; border-radius:50%;
-  background:rgba(255,255,255,0.15);
-  border:1.5px solid rgba(255,255,255,0.25);
-  color:#fff; font-size:20px; cursor:pointer;
+  background:rgba(255,255,255,0.85);
+  border:1.5px solid rgba(150,200,170,0.5);
+  color:#2d5a4a; font-size:20px; cursor:pointer;
   display:flex; align-items:center; justify-content:center;
   backdrop-filter:blur(6px);
   transition:background .15s, transform .15s;
@@ -100,21 +100,22 @@ body {
 }
 .dot {
   width:7px; height:7px; border-radius:50%;
-  background:rgba(255,255,255,0.3);
+  background:rgba(45,90,74,0.2);
   transition:background .3s, transform .3s;
 }
 .dot.active {
-  background:#fff; transform:scale(1.3);
+  background:#2d5a4a; transform:scale(1.3);
 }
 
 /* ── INFO-PANEL ── */
 .info-panel {
   position:relative; z-index:10;
-  background:rgba(0,0,0,0.45);
+  background:rgba(255,255,255,0.92);
   backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);
-  border-top:1px solid rgba(255,255,255,0.1);
+  border-top:1px solid rgba(180,210,200,0.5);
   border-radius:24px 24px 0 0;
+  box-shadow:0 -4px 20px rgba(100,160,140,0.12);
   padding:16px 20px 20px;
   flex-shrink:0;
 }
@@ -125,15 +126,15 @@ body {
 }
 .race-name {
   font-family:'Great Vibes'; font-size:clamp(30px,8vw,38px);
-  color:#fff; line-height:1;
+  color:#2d5a4a; line-height:1;
   transition:color .4s;
 }
 .race-origin {
-  font-size:12px; color:rgba(255,255,255,0.45); font-style:italic;
+  font-size:12px; color:rgba(45,90,74,0.55); font-style:italic;
 }
 
 .race-desc {
-  font-size:13px; color:rgba(255,255,255,0.7); line-height:1.5;
+  font-size:13px; color:rgba(45,90,74,0.7); line-height:1.5;
   margin-bottom:10px; font-style:italic;
 }
 
@@ -144,9 +145,9 @@ body {
 .trait {
   font-size:11px; font-weight:600; letter-spacing:.5px;
   padding:3px 10px; border-radius:50px;
-  background:rgba(255,255,255,0.12);
-  border:1px solid rgba(255,255,255,0.2);
-  color:rgba(255,255,255,0.85);
+  background:rgba(220,240,230,0.8);
+  border:1px solid rgba(150,200,170,0.5);
+  color:#2d5a4a;
   transition:background .4s, border-color .4s;
 }
 
@@ -160,10 +161,10 @@ body {
 }
 .stat-label {
   font-size:10px; font-weight:600; letter-spacing:1px;
-  text-transform:uppercase; color:rgba(255,255,255,0.45);
+  text-transform:uppercase; color:rgba(45,90,74,0.5);
 }
 .stat-bar-bg {
-  height:5px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden;
+  height:5px; background:rgba(180,210,200,0.3); border-radius:10px; overflow:hidden;
 }
 .stat-bar-fill {
   height:100%; border-radius:10px;
@@ -204,8 +205,8 @@ body {
 }
 .name-card {
   width:100%; max-width:360px;
-  background:rgba(20,20,30,0.95);
-  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.97);
+  border:1px solid rgba(180,210,200,0.5);
   border-radius:24px;
   padding:28px 24px 24px;
   display:flex; flex-direction:column; align-items:center; gap:16px;
@@ -223,11 +224,11 @@ body {
   filter:drop-shadow(0 6px 16px rgba(0,0,0,0.4));
 }
 .name-title {
-  font-family:'Great Vibes'; font-size:30px; color:#fff;
+  font-family:'Great Vibes'; font-size:30px; color:#2d5a4a;
   text-align:center; line-height:1.1;
 }
 .name-subtitle {
-  font-size:13px; color:rgba(255,255,255,0.45);
+  font-size:13px; color:rgba(45,90,74,0.55);
   text-align:center; font-style:italic; margin-top:-8px;
 }
 .name-input-wrap {
@@ -235,11 +236,11 @@ body {
 }
 .name-input {
   width:100%; padding:12px 16px;
-  background:rgba(255,255,255,0.07);
-  border:1.5px solid rgba(255,255,255,0.15);
+  background:rgba(240,247,244,0.8);
+  border:1.5px solid rgba(150,200,170,0.5);
   border-radius:14px;
   font-family:'Great Vibes'; font-size:26px;
-  color:#fff; text-align:center;
+  color:#2d5a4a; text-align:center;
   outline:none;
   transition:border-color .2s;
 }
@@ -252,7 +253,7 @@ body {
 }
 .name-counter {
   position:absolute; bottom:-18px; right:4px;
-  font-size:10px; color:rgba(255,255,255,0.25);
+  font-size:10px; color:rgba(45,90,74,0.35);
 }
 .btn-confirm {
   width:100%; padding:13px;
@@ -269,7 +270,7 @@ body {
   opacity:0.35; pointer-events:none;
 }
 .btn-back-race {
-  font-size:13px; color:rgba(255,255,255,0.35);
+  font-size:13px; color:rgba(45,90,74,0.45);
   background:none; border:none; cursor:pointer;
   font-family:'Crimson Pro'; text-decoration:underline;
   -webkit-tap-highlight-color:transparent;
