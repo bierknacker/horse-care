@@ -484,14 +484,16 @@ body {
 
 <script src="gamedata.js"></script>
 <script src="weather.js"></script>
+<script src="gamedata.js"></script>
+<script src="weather.js"></script>
 <script>
-// Tageszeit-Logik
-// Morgen: 06–11, Mittag: 11–17, Abend: 17–21, Nacht: 21–06
+
+// ── Tageszeit ─────────────────────────────────────────────
 const PERIODS = [
-  { id:'morgens', label:'Morgen',  emoji:'🌅', from:6,  to:11 },
-  { id:'mittags', label:'Mittag',  emoji:'☀️',  from:11, to:17 },
-  { id:'abends',  label:'Abend',   emoji:'🌇', from:17, to:21 },
-  { id:'nachts',  label:'Nacht',   emoji:'🌙', from:21, to:6  },
+  { id:'morgens', label:'Morgen', emoji:'🌅', from:6,  to:11 },
+  { id:'mittags', label:'Mittag', emoji:'☀️',  from:11, to:17 },
+  { id:'abends',  label:'Abend',  emoji:'🌇', from:17, to:21 },
+  { id:'nachts',  label:'Nacht',  emoji:'🌙', from:21, to:6  },
 ];
 
 function getPeriod(h) {
@@ -499,7 +501,6 @@ function getPeriod(h) {
     if (p.from < p.to) {
       if (h >= p.from && h < p.to) return p;
     } else {
-      // Nacht: 21–6 (über Mitternacht)
       if (h >= p.from || h < p.to) return p;
     }
   }
@@ -508,33 +509,211 @@ function getPeriod(h) {
 
 let currentPeriodId = null;
 
-function updateUI() {
+function updateClock() {
   const now = new Date();
-  const h = now.getHours();
-  const m = now.getMinutes();
-
-  // Uhr
+  const h   = now.getHours();
+  const m   = now.getMinutes();
   document.getElementById('clockDisplay').textContent =
     String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
 
-  // Tageszeit
   const period = getPeriod(h);
   if (period.id !== currentPeriodId) {
     currentPeriodId = period.id;
-
-    // Alle Hintergründe ausblenden
     document.querySelectorAll('.bg-layer').forEach(el => el.classList.remove('active'));
-    // Neuen einblenden
     document.getElementById('bg-' + period.id).classList.add('active');
-
-    // Badge aktualisieren
     document.getElementById('daytimeEmoji').textContent = period.emoji;
     document.getElementById('daytimeLabel').textContent = period.label;
   }
 }
 
-updateUI();
-setInterval(updateUI, 15000); // alle 15 Sek prüfen
+// ── Spielstand ────────────────────────────────────────────
+let gd = GameData.load();
+
+// Kein Spielstand → zurück zum Start
+if (!gd.race) window.location.href = 'titlescreen.html';
+
+// ── Münzen aufrechnen ─────────────────────────────────────
+function accrueCoins() {
+  const RATE = 10 / (60 * 60 * 1000);
+  if (!gd.lastCoinAccrual) { gd.lastCoinAccrual = new Date().toISOString(); return; }
+  const elapsed = Date.now() - new Date(gd.lastCoinAccrual).getTime();
+  const earned  = Math.floor(elapsed * RATE);
+  if (earned > 0) {
+    gd.coins = (gd.coins || 0) + earned;
+    gd.lastCoinAccrual = new Date().toISOString();
+  }
+}
+
+// ── Alle UI-Elemente rendern ──────────────────────────────
+function renderAll() {
+  const s = gd.stats;
+
+  // Statusleisten
+  setBar('Happiness', s.happiness);
+  setBar('Hygiene',   s.hygiene);
+  setBar('Hunger',    s.hunger);
+  setBar('Thirst',    s.thirst);
+  setBar('Energy',    s.energy);
+
+  // XP & Level
+  document.getElementById('lvlNum').textContent = gd.level;
+  const xpPct = Math.round((gd.xp / gd.xpToNextLevel) * 100);
+  document.getElementById('xpFill').style.width = xpPct + '%';
+  document.getElementById('xpPct').textContent  = xpPct + '%';
+
+  // Spieltag
+  document.getElementById('dayLabel').textContent = 'Tag ' + (gd.gameDay || 1);
+
+  // Münzen
+  const hubCoins = document.getElementById('hubCoins');
+  if (hubCoins) hubCoins.textContent = Math.floor(gd.coins || 0);
+
+  // Pferdename als Titel
+  const titleEl = document.querySelector('.game-title');
+  if (titleEl && gd.horseName) titleEl.textContent = gd.horseName;
+
+  // Rassename Untertitel
+  let sub = document.getElementById('raceSub');
+  if (!sub && gd.race) {
+    sub = document.createElement('div');
+    sub.id = 'raceSub';
+    sub.style.cssText = 'font-family:Crimson Pro,serif;font-size:13px;color:rgba(255,255,255,0.65);letter-spacing:2px;text-transform:uppercase;margin-top:-4px;text-shadow:0 1px 4px rgba(0,0,0,0.4);position:relative;z-index:10;text-align:center;';
+    sub.textContent = gd.race.name;
+    if (titleEl) titleEl.insertAdjacentElement('afterend', sub);
+  }
+
+  // XP-Akzentfarbe
+  if (gd.race && gd.race.accent) {
+    document.getElementById('xpFill').style.background =
+      'linear-gradient(90deg,' + gd.race.accent + '99,' + gd.race.accent + ')';
+  }
+
+  // Pferdbild
+  if (gd.race && gd.race.img) {
+    const img = document.querySelector('.foal-wrap img');
+    if (img && img.src.indexOf(gd.race.img) === -1) {
+      const t = new Image();
+      t.onload = () => { img.src = gd.race.img; };
+      t.src = gd.race.img;
+    }
+  }
+}
+
+function setBar(key, val) {
+  const bar = document.getElementById('bar' + key);
+  const pct = document.getElementById('pct' + key);
+  if (bar) bar.style.width  = Math.round(val) + '%';
+  if (pct) pct.textContent  = Math.round(val) + '%';
+}
+
+// ── Stat-Verfall ──────────────────────────────────────────
+function runDecay() {
+  gd = GameData.applyDecay(gd);
+  gd = WeatherSystem.applyWeatherDecay(gd);
+  renderAll();
+}
+
+// ── Wetter rendern ────────────────────────────────────────
+function renderWeather() {
+  const w = WeatherSystem.get(gd);
+  document.getElementById('weatherEmoji').textContent     = w.emoji;
+  document.getElementById('weatherLabel').textContent     = w.label;
+  document.getElementById('weatherInfoEmoji').textContent = w.emoji;
+  document.getElementById('weatherInfoText').textContent  = w.desc;
+
+  const barColors = {
+    sunny:'rgba(255,180,0,0.18)', cloudy:'rgba(120,120,160,0.18)',
+    rain:'rgba(60,100,180,0.25)', storm:'rgba(30,30,80,0.35)',
+    snow:'rgba(180,220,255,0.20)', fog:'rgba(150,150,150,0.22)',
+  };
+  const infoBar = document.getElementById('weatherInfoBar');
+  if (infoBar) infoBar.style.background = barColors[w.id] || 'rgba(0,0,0,0.2)';
+
+  document.getElementById('weatherOverlay').style.background = w.bgOverlay || '';
+  buildParticles(w.id);
+
+  const old = document.querySelector('.weather-blocked');
+  if (old) old.remove();
+  if (w.blockedActions && w.blockedActions.length > 0) {
+    const span = document.createElement('span');
+    span.className = 'weather-blocked';
+    span.textContent = '⚠️ ' + w.blockedActions.map(a =>
+      a === 'ausritt' ? 'Kein Ausritt' :
+      a === 'training' ? 'Kein Training' : a
+    ).join(', ');
+    if (infoBar) infoBar.appendChild(span);
+  }
+}
+
+function buildParticles(weatherId) {
+  const container = document.getElementById('particleContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  if (weatherId === 'rain' || weatherId === 'storm') {
+    const count = weatherId === 'storm' ? 60 : 35;
+    for (let i = 0; i < count; i++) {
+      const drop = document.createElement('div');
+      drop.className = 'raindrop';
+      drop.style.cssText = `left:${Math.random()*105}%;height:${8+Math.random()*18}px;opacity:${0.4+Math.random()*0.5};animation-duration:${0.5+Math.random()*0.6}s;animation-delay:${-Math.random()*2}s;`;
+      container.appendChild(drop);
+    }
+    if (weatherId === 'storm') {
+      const flash = document.createElement('div');
+      flash.className = 'lightning-flash';
+      container.appendChild(flash);
+    }
+  }
+  if (weatherId === 'snow') {
+    const flakes = ['❄','❅','❆','✦','✧'];
+    for (let i = 0; i < 25; i++) {
+      const f = document.createElement('div');
+      f.className = 'snowflake';
+      f.textContent = flakes[Math.floor(Math.random()*flakes.length)];
+      f.style.cssText = `left:${Math.random()*100}%;font-size:${8+Math.random()*14}px;opacity:${0.5+Math.random()*0.5};animation-duration:${3+Math.random()*4}s;animation-delay:${-Math.random()*5}s;`;
+      container.appendChild(f);
+    }
+  }
+  if (weatherId === 'fog') {
+    const fog = document.createElement('div');
+    fog.className = 'fog-layer';
+    container.appendChild(fog);
+  }
+}
+
+// ── Spielstand neu laden wenn Seite wieder sichtbar ───────
+// (z.B. nach Rückkehr vom Stall, Shop etc.)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    gd = GameData.load();
+    accrueCoins();
+    gd = WeatherSystem.load(gd);
+    renderAll();
+    renderWeather();
+  }
+});
+
+// pageshow fängt auch den Back-Button ab (iOS Safari Cache)
+window.addEventListener('pageshow', (e) => {
+  gd = GameData.load();
+  accrueCoins();
+  gd = WeatherSystem.load(gd);
+  renderAll();
+  renderWeather();
+  updateClock();
+});
+
+// ── Auto-Speichern beim Verlassen ─────────────────────────
+GameData.registerAutosave(() => gd);
+
+// ── Init ──────────────────────────────────────────────────
+gd = WeatherSystem.load(gd);
+accrueCoins();
+renderAll();
+renderWeather();
+updateClock();
+setInterval(updateClock, 15000);
+setInterval(runDecay,    60000);
 
 function showMenu(name) {
   alert('Bereich: ' + name + ' (noch nicht implementiert)');
