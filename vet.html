@@ -666,7 +666,7 @@ function renderTreatments(disabled) {
 // ── Game Over ─────────────────────────────────
 function restartGame() {
   GameData.reset();
-  window.location.href = 'breed_select.html';
+  window.location.href = 'titlescreen.html';
 }
 
 // ── Toast ─────────────────────────────────────
@@ -680,6 +680,7 @@ function showToast(msg) {
 
 // ── Navigation ────────────────────────────────
 function goBack() {
+  GameData.save(gd);
   window.location.href = 'hub.html';
 }
 

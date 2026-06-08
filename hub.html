@@ -424,7 +424,7 @@ body {
   <div class="time-bar">
       <span class="time-label">🪙 <span id="hubCoins">0</span></span>
       <span class="time-display" id="clockDisplay">--:--</span>
-      <span class="day-label">Tag 1</span>
+      <span class="day-label" id="dayLabel">Tag 1</span>
     </div>
 
     <div class="status-section">
@@ -526,20 +526,23 @@ function getPeriod(h) {
 
 let currentPeriodId = null;
 
-function updateClock() {
+function updateClock(force) {
   const now = new Date();
   const h   = now.getHours();
   const m   = now.getMinutes();
-  document.getElementById('clockDisplay').textContent =
-    String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+  const el  = document.getElementById('clockDisplay');
+  if (el) el.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
 
   const period = getPeriod(h);
-  if (period.id !== currentPeriodId) {
+  if (force || period.id !== currentPeriodId) {
     currentPeriodId = period.id;
     document.querySelectorAll('.bg-layer').forEach(el => el.classList.remove('active'));
-    document.getElementById('bg-' + period.id).classList.add('active');
-    document.getElementById('daytimeEmoji').textContent = period.emoji;
-    document.getElementById('daytimeLabel').textContent = period.label;
+    const bgEl = document.getElementById('bg-' + period.id);
+    if (bgEl) bgEl.classList.add('active');
+    const emoji = document.getElementById('daytimeEmoji');
+    const label = document.getElementById('daytimeLabel');
+    if (emoji) emoji.textContent = period.emoji;
+    if (label) label.textContent = period.label;
   }
 }
 
@@ -707,10 +710,9 @@ document.addEventListener('visibilitychange', () => {
     gd = GameData.load();
     accrueCoins();
     gd = WeatherSystem.load(gd);
-    currentPeriodId = null; // Tageszeit-Badge neu setzen erzwingen
     renderAll();
     renderWeather();
-    updateClock();
+    updateClock(true);
   }
 });
 
@@ -719,10 +721,9 @@ window.addEventListener('pageshow', (e) => {
   gd = GameData.load();
   accrueCoins();
   gd = WeatherSystem.load(gd);
-  currentPeriodId = null; // Tageszeit-Badge neu setzen erzwingen
   renderAll();
   renderWeather();
-  updateClock();
+  updateClock(true);
 });
 
 // ── Auto-Speichern beim Verlassen ─────────────────────────
@@ -731,11 +732,10 @@ GameData.registerAutosave(() => gd);
 // ── Init ──────────────────────────────────────────────────
 gd = WeatherSystem.load(gd);
 accrueCoins();
-currentPeriodId = null;
 renderAll();
 renderWeather();
-updateClock();
-setInterval(updateClock, 15000);
+updateClock(true);
+setInterval(() => updateClock(false), 15000);
 setInterval(runDecay,    60000);
 
 function confirmNewGame() {
