@@ -501,8 +501,6 @@ body {
 
 <script src="gamedata.js"></script>
 <script src="weather.js"></script>
-<script src="gamedata.js"></script>
-<script src="weather.js"></script>
 <script>
 
 // ── Tageszeit ─────────────────────────────────────────────
@@ -718,7 +716,12 @@ document.addEventListener('visibilitychange', () => {
 
 // pageshow fängt auch den Back-Button ab (iOS Safari Cache)
 window.addEventListener('pageshow', (e) => {
+  // Bei iOS Safari Cache (persisted) UND bei normalem Laden
   gd = GameData.load();
+  if (!gd || !gd.race) {
+    window.location.href = 'titlescreen.html';
+    return;
+  }
   accrueCoins();
   gd = WeatherSystem.load(gd);
   renderAll();

@@ -2,7 +2,7 @@
   "name": "Horse Care",
   "short_name": "Horse Care",
   "description": "Pflege dein eigenes Fohlen",
-  "start_url": "/splash.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a1a12",
@@ -14,5 +14,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "scope": "./"
 }

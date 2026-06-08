@@ -187,10 +187,13 @@ function getNextPage() {
     const raw = localStorage.getItem('horsecare_save');
     if (raw) {
       const data = JSON.parse(raw);
-      // Pferd existiert bereits → direkt zum Hub
-      if (data && data.race && data.horseName) return 'hub.html';
+      if (data && data.race && data.horseName) {
+        return 'hub.html';
+      }
     }
-  } catch(e) {}
+  } catch(e) {
+    console.log('Kein Spielstand gefunden, starte neu');
+  }
   return 'titlescreen.html';
 }
 
