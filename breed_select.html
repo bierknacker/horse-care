@@ -109,8 +109,8 @@ body {
   display:block;
   filter:drop-shadow(0 10px 28px rgba(0,0,0,0.45));
   transition:opacity .25s;
-  animation: foalBreathe 4s ease-in-out infinite;
-  transform-origin: bottom center;
+  
+  
 }
 
 /* Punkte-Navigation */
@@ -430,7 +430,7 @@ body {
     <button class="arrow left" onclick="navigate(-1)">&#8249;</button>
 
     <div class="horse-stage" id="horseStage">
-      <img id="horseImg" src="fohlen.png" alt="Pferd">
+      <img id="horseImg" src="friese_fohlen_animated.svg" alt="Pferd">
     </div>
 
     <div class="dots" id="dots"></div>
@@ -457,7 +457,7 @@ body {
 <!-- Name-Eingabe Overlay -->
 <div class="name-overlay" id="nameOverlay">
   <div class="name-card">
-    <img class="name-horse-img" id="nameHorseImg" src="fohlen.png" alt="Pferd">
+    <img class="name-horse-img" id="nameHorseImg" src="friese_fohlen_animated.svg" alt="Pferd">
     <div class="name-title" id="nameTitleRace">Dein Friese</div>
     <div class="name-subtitle">Wie soll dein Fohlen heißen?</div>
     <div class="name-input-wrap">
@@ -518,7 +518,7 @@ function updateUI() {
   stage.style.animation = 'floatIn .4s ease both';
   setTimeout(() => {
     img.src = r.img;
-    img.onerror = () => { img.src = 'fohlen.png'; };
+    img.onerror = () => { img.src = 'friese_fohlen_animated.svg'; };
     img.style.opacity = '1';
   }, 120);
 
@@ -565,7 +565,7 @@ function selectRace() {
   // Overlay befüllen
   const img = document.getElementById('nameHorseImg');
   img.src = r.img;
-  img.onerror = () => { img.src = 'fohlen.png'; };
+  img.onerror = () => { img.src = 'friese_fohlen_animated.svg'; };
   document.getElementById('nameTitleRace').textContent = 'Dein ' + r.name;
   document.getElementById('nameTitleRace').style.color = r.accent;
   document.getElementById('btnConfirm').style.background =
