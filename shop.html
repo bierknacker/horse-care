@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Horse Care – Shop</title>
+<style>
+/* iOS Safari: verhindert Doppel-Scroll und ermöglicht inneres Scrolling */
+html { height: 100%; }
+body { height: 100%; overflow: hidden; position: fixed; width: 100%; }
+</style>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -12,7 +17,7 @@ body {
   background:#f0f7f4; font-family:'Crimson Pro', serif;
 }
 .screen {
-  position:relative; width:100%; height:100%;
+  position:relative; width:100%; height:100svh;
   max-width:430px; margin:0 auto;
   display:flex; flex-direction:column; overflow:hidden;
 }
@@ -86,8 +91,11 @@ body {
 /* ── ARTIKEL-GRID ── */
 .shop-scroll {
   position:relative; z-index:10;
-  flex:1; overflow-y:auto; padding:4px 16px 20px;
-  -webkit-overflow-scrolling:touch;
+  flex:1;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding:4px 16px 32px;
 }
 .shop-scroll::-webkit-scrollbar { display:none; }
 

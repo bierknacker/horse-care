@@ -4,6 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Horse Care</title>
+<style>
+/* iOS Safari: verhindert Doppel-Scroll und ermöglicht inneres Scrolling */
+html { height: 100%; }
+body { height: 100%; overflow: hidden; position: fixed; width: 100%; }
+
+/* ── Fohlen-Animation ── */
+@keyframes foalFloat {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  30%       { transform: translateY(-6px) scale(1.015); }
+  60%       { transform: translateY(-3px) scale(1.008); }
+}
+@keyframes foalBreathe {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50%       { transform: translateY(-7px) scale(1.02); }
+}
+
+</style>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Crimson+Pro:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
