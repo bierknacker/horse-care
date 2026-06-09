@@ -185,21 +185,12 @@ body {
 }
 
 /* Wetter-Badge neben Daytime-Badge */
-.weather-badge {
-  position:absolute; top:10%; left:5%;
-  background:#ffffff;
-  border:1.5px solid rgba(100,150,130,0.5);
-  border-radius:50px; padding:7px 16px;
-  font-size:13px; color:#1a3d2e; font-weight:700;
-  display:flex; align-items:center; gap:7px;
-  z-index:10;
-  box-shadow:0 3px 10px rgba(0,0,0,0.12);
-}
+
 
 /* Wettereffekt-Info-Leiste */
 .weather-info-bar {
   position:relative; z-index:10;
-  margin:0 14px 8px;
+  margin:6px 14px 6px;
   border-radius:12px; padding:7px 12px;
   font-size:11px; color:#2d5a4a;
   display:flex; align-items:center; gap:8px;
@@ -398,10 +389,6 @@ body {
 
     <div class="game-title" id="gameTitle">Horse Care</div>
 
-    <div class="weather-badge" id="weatherBadge">
-      <span id="weatherEmoji">☀️</span>
-      <span id="weatherLabel">Sonnig</span>
-    </div>
     <div class="daytime-badge">
       <span id="daytimeLabel">Morgen</span>
     </div>
@@ -415,6 +402,26 @@ body {
     </div>
   </div>
 
+<!-- Status-Leiste: Münzen | Uhrzeit | Tageszeit -->
+  <div class="status-bar">
+    <div class="sb-item">
+      <span class="sb-icon">🪙</span>
+      <span class="sb-value" id="hubCoins">0</span>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-item">
+      <span class="sb-value" id="clockDisplay">--:--</span>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-item">
+      <span class="sb-label" id="daytimeLabel">Morgen</span>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-item">
+      <span class="sb-label" id="dayLabel">Tag 1</span>
+    </div>
+  </div>
+
   <!-- UNTERE HÄLFTE -->
   <div class="bottom-zone">
 
@@ -422,18 +429,7 @@ body {
     <span class="weather-info-icon" id="weatherInfoEmoji">☀️</span>
     <span class="weather-info-text" id="weatherInfoText">Schönes Wetter heute!</span>
   </div>
-  <div class="info-strip">
-      <div class="info-item">
-        <span class="info-icon">🪙</span>
-        <span class="info-value" id="hubCoins">0</span>
-      </div>
-      <div class="info-item info-clock">
-        <span class="info-value clock-val" id="clockDisplay">--:--</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label" id="dayLabel">Tag 1</span>
-      </div>
-    </div>
+
 
     <div class="status-section">
       <div class="status-row">
@@ -645,8 +641,6 @@ function runDecay() {
 // ── Wetter rendern ────────────────────────────────────────
 function renderWeather() {
   const w = WeatherSystem.get(gd);
-  document.getElementById('weatherEmoji').textContent     = w.emoji;
-  document.getElementById('weatherLabel').textContent     = w.label;
   document.getElementById('weatherInfoEmoji').textContent = w.emoji;
   document.getElementById('weatherInfoText').textContent  = w.desc;
 
